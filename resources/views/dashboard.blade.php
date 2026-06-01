@@ -5,7 +5,7 @@
 @section('content')
     <div class="page-header">
         <h1 class="header-title">Dashboard</h1>
-        <x-button variant="primary" :href="route('articles.create')">+ Nuovo Articolo</x-button>
+        <x-button variant="primary" :href="route('admin.articles.create')">+ Nuovo Articolo</x-button>
     </div>
 
     @if (session('success'))
@@ -18,8 +18,8 @@
 
         <div class="card-actions">
             <x-button variant="primary" :href="route('home')">Vai al blog</x-button>
-            <x-button variant="cancel" :href="route('profile.edit')">Modifica profilo</x-button>
-            <x-button variant="cancel" :href="route('users.index')">Gestione utenti</x-button>
+            <x-button variant="cancel" :href="route('admin.profile.edit')">Modifica profilo</x-button>
+            <x-button variant="cancel" :href="route('admin.users.index')">Gestione utenti</x-button>
         </div>
     </x-card>
 
@@ -53,9 +53,9 @@
                 </div>
                 <div class="card-actions">
                     <x-button variant="read" :href="route('articles.show', $article->id)">Leggi tutto</x-button>
-                    <x-button variant="edit" :href="route('articles.edit', $article->id)">Modifica</x-button>
+                    <x-button variant="edit" :href="route('admin.articles.edit', $article->id)">Modifica</x-button>
                     <x-delete-form
-                        :action="route('articles.destroy', $article->id)"
+                        :action="route('admin.articles.destroy', $article->id)"
                         confirm="Sei sicuro di voler eliminare questo articolo definitivamente?" />
                 </div>
             </x-card>

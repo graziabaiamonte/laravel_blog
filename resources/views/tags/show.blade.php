@@ -5,7 +5,7 @@
 @section('content')
 
     <div class="navigation">
-        <a href="{{ route('tags.index') }}" class="btn-back">← Torna ai tag</a>
+        <a href="{{ route('admin.tags.index') }}" class="btn-back">← Torna ai tag</a>
     </div>
 
     <h1 class="article-title">#{{ $tag->name }}</h1>
@@ -22,7 +22,7 @@
             <x-card>
                 <h2>{{ $article->title }}</h2>
                 <div class="card-meta">
-                    Pubblicato il: {{ $article->created_at->format('d/m/Y H:i') }}
+                    Pubblicato il: {{ $article->created_at }}
                 </div>
                 <div>
                     {{ \Illuminate\Support\Str::limit($article->content, 150) }}
@@ -35,9 +35,9 @@
     @endif
 
     <div class="footer-actions">
-        <x-button variant="edit" :href="route('tags.edit', $tag->id)">Modifica tag</x-button>
+        <x-button variant="edit" :href="route('admin.tags.edit', $tag->id)">Modifica tag</x-button>
         <x-delete-form
-            :action="route('tags.destroy', $tag->id)"
+            :action="route('admin.tags.destroy', $tag->id)"
             confirm="Eliminare il tag? L'associazione con gli articoli verrà rimossa, ma gli articoli resteranno." />
     </div>
 

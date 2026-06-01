@@ -9,18 +9,21 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Storage; // per generare l'URL pubblico del file
 use Carbon\Carbon; // libreria per le date di laravel
 use App\Models\Category;
 
-/**
- * @mixin IdeHelperArticle
- */
+
+// /**
+//  * @mixin IdeHelperArticle
+//  */
 class Article extends Model
 {
     protected $fillable = [
         'title',
         'content',
         'category_id',
+        'image',
     ];
 
 
@@ -45,6 +48,15 @@ class Article extends Model
         return Attribute::make(
             get: fn (string $value) => Str::title($value), // Title Case
             set: fn (string $value) => trim($value),
+        );
+    }
+
+    // Accessor che permette di usare $article->image_url, 
+    // trasformando il percorso salvato (es. "articles/abc.jpg") nell'URL pubblico completo grazie al symlink
+    protected function imageUrl(): Attribute
+    {
+        return Attribute::make(
+            get: fn () => $this->image ? Storage::disk('public')->url($this->image) : null,
         );
     }
 
@@ -82,7 +94,7 @@ class Article extends Model
         );
     }
     // 
-    // Builder $query: primo parametro obbligatorio per ogni scope. È l'istanza del query builder di Eloquent su cui stai costruendo la query. Laravel lo passa automaticamente.
+    // Builder $query: primo parametro obbligatorio per ogni scope. È l'istanza del query builder di Eloquent su cui si costruisce la query. Laravel lo passa automaticamente.
     // 
     // when($categoryId, ...) alternativa a if: se il primo argomento ($categoryId) è truthy (non null, non 0, non stringa vuota), esegue la callback passata come secondo argomento.
 
@@ -97,7 +109,7 @@ class Article extends Model
     // Scope che filtra gli articoli di uno specifico utente.
     // A differenza degli scope sopra (che usano when() perché il filtro è opzionale),
     // qui l'utente è SEMPRE obbligatorio: vogliamo solo i suoi articoli.
-    // Lo useremo nella dashboard così: Article::ownedBy(auth()->user())->...
+    // Lo useremo nella dashboard con Article::ownedBy(auth()->user())->...
     #[Scope]
     protected function ownedBy(Builder $query, User $user): Builder
     {

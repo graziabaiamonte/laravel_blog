@@ -16,7 +16,7 @@
         $selectedTagIds = old('tags', $article->tags->pluck('id')->toArray());
     @endphp
 
-    <form action="{{ route('articles.update', $article->id) }}" method="POST">
+    <form action="{{ route('admin.articles.update', $article->id) }}" method="POST" enctype="multipart/form-data">
         @csrf
         @method('PUT')
 
@@ -41,7 +41,7 @@
             <label>Tag (opzionale)</label>
             @if ($tags->isEmpty())
                 <p class="muted">
-                    Nessun tag disponibile. <a href="{{ route('tags.create') }}">Creane uno</a>.
+                    Nessun tag disponibile. <a href="{{ route('admin.tags.create') }}">Creane uno</a>.
                 </p>
             @else
                 <div class="checkbox-list">
@@ -57,6 +57,24 @@
                     @endforeach
                 </div>
             @endif
+        </div>
+
+        <div class="form-group">
+            <label for="image">Immagine</label>
+
+            {{-- Anteprima dell'immagine attualmente salvata --}}
+            @if ($article->image_url)
+                <div class="current-image">
+                    <img src="{{ $article->image_url }}" alt="Immagine di {{ $article->title }}" style="max-width: 200px; height: auto;">
+                </div>
+
+                <label>
+                    <input type="checkbox" name="remove_image" value="1" {{ old('remove_image') ? 'checked' : '' }}>
+                    Rimuovi l'immagine attuale
+                </label>
+            @endif
+
+            <input type="file" id="image" name="image" accept="image/*">
         </div>
 
         <div class="form-group">

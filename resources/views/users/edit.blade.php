@@ -13,7 +13,7 @@
     {{-- @method('PUT') perché la rotta users.update risponde in PUT/PATCH,
          ma i form HTML sanno inviare solo GET e POST: Laravel "simula" il PUT
          tramite questo campo nascosto. --}}
-    <form action="{{ route('users.update', $user->id) }}" method="POST">
+    <form action="{{ route('admin.users.update', $user->id) }}" method="POST">
         @csrf
         @method('PUT')
 
@@ -30,7 +30,7 @@
         </div>
 
         <x-button variant="edit">Aggiorna utente</x-button>
-        <x-button variant="cancel" :href="route('users.index')">Annulla</x-button>
+        <x-button variant="cancel" :href="route('admin.users.index')">Annulla</x-button>
     </form>
 
 @endsection

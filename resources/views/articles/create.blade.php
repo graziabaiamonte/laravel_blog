@@ -10,7 +10,8 @@
 
     <x-form-errors />
 
-    <form action="{{ route('articles.store') }}" method="POST">
+    {{-- enctype="multipart/form-data" è OBBLIGATORIO per inviare file tramite form. --}}
+    <form action="{{ route('admin.articles.store') }}" method="POST" enctype="multipart/form-data">
         @csrf
 
         <div class="form-group">
@@ -34,7 +35,7 @@
             <label>Tag (opzionale)</label>
             @if ($tags->isEmpty())
                 <p class="muted">
-                    Nessun tag disponibile. <a href="{{ route('tags.create') }}">Creane uno</a>.
+                    Nessun tag disponibile. <a href="{{ route('admin.tags.create') }}">Creane uno</a>.
                 </p>
             @else
                 <div class="checkbox-list">
@@ -50,6 +51,13 @@
                     @endforeach
                 </div>
             @endif
+        </div>
+
+        <div class="form-group">
+            <label for="image">Immagine (opzionale)</label>
+            {{-- accept="image/*" suggerisce al browser di mostrare solo immagini nel selettore,
+                 ma la validazione VERA resta lato server nella regola ImageFile. --}}
+            <input type="file" id="image" name="image" accept="image/*">
         </div>
 
         <div class="form-group">

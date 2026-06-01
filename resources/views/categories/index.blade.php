@@ -6,7 +6,7 @@
 
     <div class="page-header">
         <h1 class="header-title">Gestione Categorie</h1>
-        <x-button variant="primary" :href="route('categories.create')">+ Nuova Categoria</x-button>
+        <x-button variant="primary" :href="route('admin.categories.create')">+ Nuova Categoria</x-button>
     </div>
 
     @if (session('success'))
@@ -25,10 +25,10 @@
                     Articoli: {{ $category->articles()->count() }}
                 </div>
                 <div class="card-actions">
-                    <x-button variant="read" :href="route('categories.show', $category->id)">Dettagli</x-button>
-                    <x-button variant="edit" :href="route('categories.edit', $category->id)">Modifica</x-button>
+                    <x-button variant="read" :href="route('admin.categories.show', $category->id)">Dettagli</x-button>
+                    <x-button variant="edit" :href="route('admin.categories.edit', $category->id)">Modifica</x-button>
                     <x-delete-form
-                        :action="route('categories.destroy', $category->id)"
+                        :action="route('admin.categories.destroy', $category->id)"
                         confirm="Eliminare la categoria? Gli articoli verranno impostati a nessuna categoria." />
                 </div>
             </x-card>

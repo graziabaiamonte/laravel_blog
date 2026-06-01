@@ -12,7 +12,7 @@
     >Elimina account</x-button>
 
     <x-modal name="confirm-user-deletion" :show="$errors->userDeletion->isNotEmpty()" focusable>
-        <form method="post" action="{{ route('profile.destroy') }}" style="padding: 24px;">
+        <form method="post" action="{{ route('admin.profile.destroy') }}" style="padding: 24px;">
             @csrf
             @method('delete')
 

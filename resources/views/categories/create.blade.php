@@ -10,7 +10,7 @@
 
     <x-form-errors />
 
-    <form action="{{ route('categories.store') }}" method="POST">
+    <form action="{{ route('admin.categories.store') }}" method="POST">
         @csrf
 
         <div class="form-group">
@@ -19,7 +19,7 @@
         </div>
 
         <x-button variant="primary">Crea categoria</x-button>
-        <x-button variant="cancel" :href="route('categories.index')">Annulla</x-button>
+        <x-button variant="cancel" :href="route('admin.categories.index')">Annulla</x-button>
     </form>
 
 @endsection

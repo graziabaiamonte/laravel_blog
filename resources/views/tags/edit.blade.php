@@ -10,7 +10,7 @@
 
     <x-form-errors />
 
-    <form action="{{ route('tags.update', $tag->id) }}" method="POST">
+    <form action="{{ route('admin.tags.update', $tag->id) }}" method="POST">
         @csrf
         @method('PUT')
 
@@ -20,7 +20,7 @@
         </div>
 
         <x-button variant="edit">Aggiorna tag</x-button>
-        <x-button variant="cancel" :href="route('tags.index')">Annulla</x-button>
+        <x-button variant="cancel" :href="route('admin.tags.index')">Annulla</x-button>
     </form>
 
 @endsection

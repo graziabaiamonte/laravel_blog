@@ -5,27 +5,14 @@ use App\Models\Category;
 use App\Models\Tag;
 use App\Http\Requests\StoreArticleRequest;
 use App\Http\Requests\UpdateArticleRequest;
-// use Illuminate\Http\Request;  // usata per leggere i dati inviati dalle form
+use Illuminate\Support\Facades\Storage;
 
 /**
- * Controller di GESTIONE degli articoli (riservato agli utenti loggati).
+ * GESTIONE degli articoli per gli utenti loggati
  *
- * La parte pubblica (lista di tutti gli articoli + singolo articolo) è stata
- * spostata in App\Http\Controllers\Frontend\ArticleController.
- *
- * Qui restano:
- * - index:   la lista dei SOLI articoli dell'utente loggato (alimenta la dashboard)
- * - create/store/edit/update/destroy: il CRUD vero e proprio
  */
 class ArticleController extends Controller
 {
-    /**
-     * Mostra SOLO gli articoli dell'utente loggato (la sua dashboard).
-     *
-     * Qui sta il cuore della richiesta: usiamo lo scope ownedBy() del model
-     * Article per filtrare in base all'utente autenticato. Lo scope nasconde
-     * il dettaglio del "where user_id = ..." e rende la query molto leggibile.
-     */
     public function index()
     {
         $articles = Article::with('category', 'tags')
@@ -57,44 +44,31 @@ class ArticleController extends Controller
         //     'content' => 'required',
         //     'category_id' => 'nullable|exists:categories,id',
         //     'tags' => 'nullable|array',
-
-        //     // Ogni id nell'array tags deve esistere nella tabella tags
         //     'tags.*' => 'exists:tags,id',
         // ]);
 
         $validatedData = $request->validated();
 
-        // Creiamo l'articolo ATTRAVERSO la relazione dell'utente loggato:
-        // $request->user() restituisce l'utente autenticato, e ->articles()->create(...)
-        // imposta automaticamente la colonna user_id con il suo id.
-        // (escludiamo i tag, che vanno nella pivot; infatti nei fillable di Article non c'è 'tags')
-        $article = $request->user()->articles()->create(collect($validatedData)->except('tags')->toArray());
+        // Se è stato caricato un file immagine, lo salviamo su disco "public"
+        // dentro la cartella "articles". store() genera un nome univoco e
+        // restituisce il percorso che salviamo in DB.
+        if ($request->hasFile('image')) {
+            $validatedData['image'] = $request->file('image')->store('articles', 'public');
+        }
 
-        // Sincronizziamo i tag selezionati nella tabella pivot article_tag.
+        // $request->user() restituisce l'utente autenticato
+        $article = $request->user()->articles()->create(
+            collect($validatedData)->except(['tags', 'remove_image'])->toArray()
+        );
+
         $article->tags()->sync($validatedData['tags'] ?? []);
 
-        // Dopo aver creato l'articolo torniamo alla dashboard (i miei articoli).
-        return redirect()->route('dashboard')->with('success', 'Articolo creato con successo!');
+        return redirect()->route('admin.dashboard')->with('success', 'Articolo creato con successo!');
     }
 
     /**
      * Show the form for editing the specified resource.
      */
-    // public function edit(string $id)
-    // {
-    //     // carica i tag attualmente associati a quell'articolo
-    //     $article = Article::with('tags')->findOrFail($id);
-
-    //     $categories = Category::orderBy('name', 'asc')->get();
-    //     $tags = Tag::orderBy('name', 'asc')->get();
-
-    //     return view('articles.edit', [
-    //         'article' => $article,
-    //         'categories' => $categories,
-    //         'tags' => $tags,
-    //     ]);
-    // }
-
      public function edit(Article $article)
     {
         // carica i tag attualmente associati a quell'articolo
@@ -113,50 +87,49 @@ class ArticleController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    // public function update(UpdateArticleRequest $request, string $id)
-    // {
-    //     $validatedData = $request->validated();
-
-    //     $article = Article::findOrFail($id);
-    //     $article->update(collect($validatedData)->except('tags')->toArray());
-
-    //     $article->tags()->sync($validatedData['tags'] ?? []);
-
-    //     return redirect()->route('articles.index')->with('success', 'Articolo aggiornato con successo!');
-    // }
-
-    // Versione con route-model binding: Laravel risolve {article} in un oggetto
-    // Article (404 automatico se non esiste), quindi niente findOrFail manuale.
     public function update(UpdateArticleRequest $request, Article $article)
     {
         $validatedData = $request->validated();
 
-        // $article->update(collect($validatedData)->except('tags')->toArray());
         $dataToUpdate = $validatedData;
-        unset($dataToUpdate['tags']); // Rimuove i tag in modo nativo
+       
+        // Togliamo le chiavi che NON sono colonne dirette da aggiornare con fill():
+        // 'tags' (relazione pivot) e 'remove_image' (flag della checkbox).
+        unset($dataToUpdate['tags'], $dataToUpdate['remove_image']);
 
-        $article->fill($dataToUpdate)
-                ->save();
+        if ($request->hasFile('image')) {
 
+            // Prima cancelliamo il vecchio (se esisteva), poi salviamo il nuovo.
+            if ($article->image) {
+                Storage::disk('public')->delete($article->image);
+            }
+            $dataToUpdate['image'] = $request->file('image')->store('articles', 'public');
+        } elseif ($request->boolean('remove_image')) {
+            // l'utente ha spuntato "rimuovi immagine" senza caricarne una nuova.
+            
+            if ($article->image) {
+                Storage::disk('public')->delete($article->image);
+            }
+            $dataToUpdate['image'] = null;
+        }
+       
+        // nessun file e nessuna richiesta di rimozione → l'immagine resta invariata.
+        $article->fill($dataToUpdate)->save();
         $article->tags()->sync($validatedData['tags'] ?? []);
-
-        return redirect()->route('dashboard')->with('success', 'Articolo aggiornato con successo!');
+        
+        return redirect()->route('admin.dashboard')->with('success', 'Articolo aggiornato con successo!');
     }
 
     /**
      * Remove the specified resource from storage.
      */
-    // public function destroy(string $id)
-    // {
-    //     Article::destroy($id);
-    //     return redirect()->route('articles.index')->with('success', 'Articolo eliminato con successo!');
-    // }
-
-    // Versione con route-model binding: ricevo già l'oggetto Article e lo elimino
-    // con ->delete() (invece di Article::destroy($id) sulla stringa id).
     public function destroy(Article $article)
     {
+        if ($article->image) {
+            Storage::disk('public')->delete($article->image);
+        }
+
         $article->delete($article);
-        return redirect()->route('dashboard')->with('success', 'Articolo eliminato con successo!');
+        return redirect()->route('admin.dashboard')->with('success', 'Articolo eliminato con successo!');
     }
 }

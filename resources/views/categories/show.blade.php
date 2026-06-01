@@ -5,7 +5,7 @@
 @section('content')
 
     <div class="navigation">
-        <a href="{{ route('categories.index') }}" class="btn-back">← Torna alle categorie</a>
+        <a href="{{ route('admin.categories.index') }}" class="btn-back">← Torna alle categorie</a>
     </div>
 
     <h1 class="article-title">{{ $category->name }}</h1>
@@ -35,9 +35,9 @@
     @endif
 
     <div class="footer-actions">
-        <x-button variant="edit" :href="route('categories.edit', $category->id)">Modifica categoria</x-button>
+        <x-button variant="edit" :href="route('admin.categories.edit', $category->id)">Modifica categoria</x-button>
         <x-delete-form
-            :action="route('categories.destroy', $category->id)"
+            :action="route('admin.categories.destroy', $category->id)"
             confirm="Eliminare la categoria? Gli articoli verranno impostati a nessuna categoria." />
     </div>
 

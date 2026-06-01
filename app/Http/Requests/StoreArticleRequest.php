@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests;
 
+use App\Rules\ImageFile;
 use App\Rules\WithoutForbiddenWords;
 use Illuminate\Foundation\Http\FormRequest;
 
@@ -28,6 +29,7 @@ class StoreArticleRequest extends FormRequest
             'category_id' => 'nullable|exists:categories,id',
             'tags'        => 'nullable|array',
             'tags.*'      => 'exists:tags,id',
+            'image'       => ['nullable', 'file', new ImageFile()],
         ];
     }
 }

@@ -24,7 +24,7 @@ class TagController extends Controller
     {
         $data = $request->validated();
         Tag::create($data);
-        return redirect()->route('tags.index')->with('success', 'Tag creato.');
+        return redirect()->route('admin.tags.index')->with('success', 'Tag creato.');
     }
 
     public function show(string $id)
@@ -43,12 +43,12 @@ class TagController extends Controller
     {
         $data = $request->validated();
         Tag::whereId($id)->update($data);
-        return redirect()->route('tags.index')->with('success', 'Tag aggiornato.');
+        return redirect()->route('admin.tags.index')->with('success', 'Tag aggiornato.');
     }
 
     public function destroy(string $id)
     {
         Tag::destroy($id);
-        return redirect()->route('tags.index')->with('success', 'Tag eliminato.');
+        return redirect()->route('admin.tags.index')->with('success', 'Tag eliminato.');
     }
 }

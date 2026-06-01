@@ -6,7 +6,7 @@
 
     <div class="page-header">
         <h1 class="header-title">Gestione Tag</h1>
-        <x-button variant="primary" :href="route('tags.create')">+ Nuovo Tag</x-button>
+        <x-button variant="primary" :href="route('admin.tags.create')">+ Nuovo Tag</x-button>
     </div>
 
     @if (session('success'))
@@ -25,10 +25,10 @@
                     Articoli associati: {{ $tag->articles()->count() }}
                 </div>
                 <div class="card-actions">
-                    <x-button variant="read" :href="route('tags.show', $tag->id)">Dettagli</x-button>
-                    <x-button variant="edit" :href="route('tags.edit', $tag->id)">Modifica</x-button>
+                    <x-button variant="read" :href="route('admin.tags.show', $tag->id)">Dettagli</x-button>
+                    <x-button variant="edit" :href="route('admin.tags.edit', $tag->id)">Modifica</x-button>
                     <x-delete-form
-                        :action="route('tags.destroy', $tag->id)"
+                        :action="route('admin.tags.destroy', $tag->id)"
                         confirm="Eliminare il tag? L'associazione con gli articoli verrà rimossa, ma gli articoli resteranno." />
                 </div>
             </x-card>

@@ -7,12 +7,12 @@
     <div class="page-header">
         <h1 class="header-title">Blog</h1>
         <div style="display:flex; gap:10px;">
-            <x-button variant="cancel" :href="route('tags.index')">Tag</x-button>
-            <x-button variant="cancel" :href="route('categories.index')">Categorie</x-button>
+            <x-button variant="cancel" :href="route('admin.tags.index')">Tag</x-button>
+            <x-button variant="cancel" :href="route('admin.categories.index')">Categorie</x-button>
             
             {{-- Il pulsante per creare un articolo si mostra solo agli utenti loggati. --}}
             @auth
-                <x-button variant="primary" :href="route('articles.create')">+ Nuovo Articolo</x-button>
+                <x-button variant="primary" :href="route('admin.articles.create')">+ Nuovo Articolo</x-button>
             @endauth
         </div>
     </div>

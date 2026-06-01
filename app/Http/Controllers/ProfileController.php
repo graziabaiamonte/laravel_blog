@@ -20,7 +20,7 @@ class ProfileController extends Controller
             'user' => $request->user(),
         ]);
 
-        // Il secondo parametro di view() è un array di dati che vengono "passati" alla view. Qui passiamo l'utente loggato ($request->user()) con la chiave user. Dentro Blade potrai usare la variabile $user per accedere ai suoi dati (es. {{ $user->email }}
+        // Il secondo parametro di view() è un array di dati che vengono "passati" alla view. Qui passiamo l'utente loggato ($request->user()) con la chiave user.
     }
 
     /**
@@ -34,12 +34,11 @@ class ProfileController extends Controller
 
         if ($request->user()->isDirty('email')) {
             $request->user()->email_verified_at = null;
-            // infatti se l'utente cambia indirizzo email, la nuova email non è ancora verificata
         }
 
         $request->user()->save();
 
-        return Redirect::route('profile.edit')->with('status', 'profile-updated');
+        return Redirect::route('admin.profile.edit')->with('status', 'profile-updated');
     }
 
     /**
@@ -51,17 +50,12 @@ class ProfileController extends Controller
             'password' => ['required', 'current_password'],
         ]);
 
-        // userDeletion è il nome di un error bag: contenitore separato per gli errori, in modo che se fossero presenti più form, il messaggio di errore venga mostrato solo nel form corretto
+        // userDeletion è il nome di un error bag: contenitore separato per gli errori, in modo che se fossero presenti più form, il messaggio di errore vi mostrato solo nel form corretto
 
         $user = $request->user();
-
         Auth::logout();
-
         $user->delete($request);
-
-        // distrugge tutti i dati della sessione
         $request->session()->invalidate();
-
         $request->session()->regenerateToken();
 
         return Redirect::to('/');

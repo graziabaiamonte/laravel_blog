@@ -10,7 +10,7 @@
 
     <x-form-errors />
 
-    <form action="{{ route('tags.store') }}" method="POST">
+    <form action="{{ route('admin.tags.store') }}" method="POST">
         @csrf
 
         <div class="form-group">
@@ -19,7 +19,7 @@
         </div>
 
         <x-button variant="primary">Crea tag</x-button>
-        <x-button variant="cancel" :href="route('tags.index')">Annulla</x-button>
+        <x-button variant="cancel" :href="route('admin.tags.index')">Annulla</x-button>
     </form>
 
 @endsection

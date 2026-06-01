@@ -30,7 +30,7 @@ class CategoryController extends Controller
     {
         $data = $request->validated();
         Category::create($data);
-        return redirect()->route('categories.index')->with('success', 'Categoria creata.');
+        return redirect()->route('admin.categories.index')->with('success', 'Categoria creata.');
     }
 
     public function edit(string $id)
@@ -46,12 +46,12 @@ class CategoryController extends Controller
         $category = Category::findOrFail($id);
         $category->update($data);
 
-        return redirect()->route('categories.index')->with('success', 'Categoria aggiornata.');
+        return redirect()->route('admin.categories.index')->with('success', 'Categoria aggiornata.');
     }
 
     public function destroy(string $id)
     {
         Category::destroy($id);
-        return redirect()->route('categories.index')->with('success', 'Categoria eliminata.');
+        return redirect()->route('admin.categories.index')->with('success', 'Categoria eliminata.');
     }
 }

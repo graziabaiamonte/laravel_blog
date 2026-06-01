@@ -10,7 +10,7 @@
 
     <x-form-errors />
 
-    <form action="{{ route('categories.update', $category->id) }}" method="POST">
+    <form action="{{ route('admin.categories.update', $category->id) }}" method="POST">
         @csrf
         @method('PUT')
 
@@ -20,7 +20,7 @@
         </div>
 
         <x-button variant="edit">Aggiorna categoria</x-button>
-        <x-button variant="cancel" :href="route('categories.index')">Annulla</x-button>
+        <x-button variant="cancel" :href="route('admin.categories.index')">Annulla</x-button>
     </form>
 
 @endsection

@@ -27,6 +27,12 @@
             </div>
         @endif
 
+        @if ($article->image_url)
+            <div class="article-image">
+                <img src="{{ $article->image_url }}" alt="Immagine di {{ $article->title }}" style="max-width: 100%; height: 350px; object-fit: cover;">
+            </div>
+        @endif
+
         <div class="article-content">
             {{ $article->content }}
         </div>
@@ -37,9 +43,9 @@
     @auth
         @if (auth()->id() === $article->user_id)
             <div class="footer-actions">
-                <x-button variant="edit" :href="route('articles.edit', $article->id)">Modifica questo articolo</x-button>
+                <x-button variant="edit" :href="route('admin.articles.edit', $article->id)">Modifica questo articolo</x-button>
                 <x-delete-form
-                    :action="route('articles.destroy', $article->id)"
+                    :action="route('admin.articles.destroy', $article->id)"
                     confirm="Sei sicuro di voler eliminare questo articolo definitivamente?" />
             </div>
         @endif
