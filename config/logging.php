@@ -65,6 +65,20 @@ return [
             'replace_placeholders' => true,
         ],
 
+        'scrivi-log' => [
+            'driver' => 'single',
+            'path' => storage_path('logs/scrivi-log.log'),
+            'level' => 'info',
+            'replace_placeholders' => true,
+        ],
+
+        'deleted-categories' => [
+            'driver' => 'single',
+            'path' => storage_path('logs/deleted-categories.log'),
+            'level' => 'info',
+            'replace_placeholders' => true,
+        ],
+
         'daily' => [
             'driver' => 'daily',
             'path' => storage_path('logs/laravel.log'),
