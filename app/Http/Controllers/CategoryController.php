@@ -3,12 +3,14 @@
 namespace App\Http\Controllers;
 
 use App\Models\Category;
-use Illuminate\Http\Request;
 use App\Http\Requests\StoreCategoryRequest;
 use App\Http\Requests\UpdateCategoryRequest;
+use App\Traits\HandlesImageUpload;
 
 class CategoryController extends Controller
 {
+    use HandlesImageUpload;
+
     public function index()
     {
         $categories = Category::orderByDesc('created_at')->get();
@@ -29,6 +31,9 @@ class CategoryController extends Controller
     public function store(StoreCategoryRequest $request)
     {
         $data = $request->validated();
+
+        $data['image'] = $this->storeImage($request->file('image'), 'categories');
+
         Category::create($data);
         return redirect()->route('admin.categories.index')->with('success', 'Categoria creata.');
     }
@@ -41,9 +46,15 @@ class CategoryController extends Controller
 
     public function update(UpdateCategoryRequest $request, string $id)
     {
+        $category = Category::findOrFail($id);
+
         $data = $request->validated();
 
-        $category = Category::findOrFail($id);
+        $data['image'] = $this->resolveImageUpload($request, $category->image, 'categories');
+
+        // remove_image è solo un flag del form, non una colonna: lo togliamo.
+        unset($data['remove_image']);
+
         $category->update($data);
 
         return redirect()->route('admin.categories.index')->with('success', 'Categoria aggiornata.');
@@ -51,7 +62,12 @@ class CategoryController extends Controller
 
     public function destroy(string $id)
     {
-        Category::destroy($id);
+        $category = Category::findOrFail($id);
+
+        // Prima cancelliamo il file dal disco, poi il record dal DB.
+        $this->deleteImage($category->image);
+        $category->delete();
+
         return redirect()->route('admin.categories.index')->with('success', 'Categoria eliminata.');
     }
 }

@@ -36,6 +36,8 @@ class ImageFile implements ValidationRule
      */
     public function validate(string $attribute, mixed $value, Closure $fail): void
     {
+        // phpinfo();
+
         if (! $value instanceof UploadedFile || ! $value->isValid()) {
             $fail('Il file caricato non è valido.');
             return;
@@ -54,7 +56,7 @@ class ImageFile implements ValidationRule
             return;
         }
 
-        // 4) Controllo aggiuntivo sull'ESTENSIONE come doppia rete di sicurezza.
+        // Controllo aggiuntivo sull'ESTENSIONE come doppia rete di sicurezza.
         $extension = strtolower($value->getClientOriginalExtension());
         if (! in_array($extension, $this->allowedExtensions, true)) {
             $fail('Estensione non ammessa. Sono consentite solo immagini: ' . implode(', ', $this->allowedExtensions) . '.');

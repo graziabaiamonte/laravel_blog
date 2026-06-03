@@ -2,7 +2,7 @@
 
 namespace App\Http\Requests;
 
-// use Illuminate\Contracts\Validation\ValidationRule;
+use App\Rules\ImageFile;
 use Illuminate\Foundation\Http\FormRequest;
 
 class StoreCategoryRequest extends FormRequest
@@ -22,6 +22,9 @@ class StoreCategoryRequest extends FormRequest
      */
     public function rules(): array
     {
-        return   ['name' => 'required|string|max:255'];
+        return [
+            'name'  => 'required|string|max:255',
+            'image' => ['nullable', 'file', new ImageFile()],
+        ];
     }
 }

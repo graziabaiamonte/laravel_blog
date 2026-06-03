@@ -9,6 +9,13 @@
     </div>
 
     <h1 class="article-title">{{ $category->name }}</h1>
+
+    @if ($category->image_url)
+        <div class="current-image">
+            <img src="{{ $category->image_url }}" alt="Immagine di {{ $category->name }}" style="max-width: 300px; height: auto;">
+        </div>
+    @endif
+
     <div class="article-meta">
         Articoli in questa categoria: {{ $category->articles->count() }}
     </div>

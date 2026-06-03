@@ -5,7 +5,7 @@ use App\Models\Category;
 use App\Models\Tag;
 use App\Http\Requests\StoreArticleRequest;
 use App\Http\Requests\UpdateArticleRequest;
-use Illuminate\Support\Facades\Storage;
+use App\Traits\HandlesImageUpload;
 
 /**
  * GESTIONE degli articoli per gli utenti loggati
@@ -13,6 +13,9 @@ use Illuminate\Support\Facades\Storage;
  */
 class ArticleController extends Controller
 {
+
+    use HandlesImageUpload;
+
     public function index()
     {
         $articles = Article::with('category', 'tags')
@@ -49,12 +52,7 @@ class ArticleController extends Controller
 
         $validatedData = $request->validated();
 
-        // Se è stato caricato un file immagine, lo salviamo su disco "public"
-        // dentro la cartella "articles". store() genera un nome univoco e
-        // restituisce il percorso che salviamo in DB.
-        if ($request->hasFile('image')) {
-            $validatedData['image'] = $request->file('image')->store('articles', 'public');
-        }
+        $validatedData['image'] = $this->storeImage($request->file('image'), 'articles');
 
         // $request->user() restituisce l'utente autenticato
         $article = $request->user()->articles()->create(
@@ -92,31 +90,18 @@ class ArticleController extends Controller
         $validatedData = $request->validated();
 
         $dataToUpdate = $validatedData;
-       
+
         // Togliamo le chiavi che NON sono colonne dirette da aggiornare con fill():
         // 'tags' (relazione pivot) e 'remove_image' (flag della checkbox).
         unset($dataToUpdate['tags'], $dataToUpdate['remove_image']);
 
-        if ($request->hasFile('image')) {
+        // resolveImageUpload gestisce i tre casi (nuovo file / rimozione / invariato),
+        // cancellando da solo il vecchio file quando serve.
+        $dataToUpdate['image'] = $this->resolveImageUpload($request, $article->image, 'articles');
 
-            // Prima cancelliamo il vecchio (se esisteva), poi salviamo il nuovo.
-            if ($article->image) {
-                Storage::disk('public')->delete($article->image);
-            }
-            $dataToUpdate['image'] = $request->file('image')->store('articles', 'public');
-        } elseif ($request->boolean('remove_image')) {
-            // l'utente ha spuntato "rimuovi immagine" senza caricarne una nuova.
-            
-            if ($article->image) {
-                Storage::disk('public')->delete($article->image);
-            }
-            $dataToUpdate['image'] = null;
-        }
-       
-        // nessun file e nessuna richiesta di rimozione → l'immagine resta invariata.
         $article->fill($dataToUpdate)->save();
         $article->tags()->sync($validatedData['tags'] ?? []);
-        
+
         return redirect()->route('admin.dashboard')->with('success', 'Articolo aggiornato con successo!');
     }
 
@@ -125,9 +110,8 @@ class ArticleController extends Controller
      */
     public function destroy(Article $article)
     {
-        if ($article->image) {
-            Storage::disk('public')->delete($article->image);
-        }
+        // Prima il file dal disco, poi il record dal DB.
+        $this->deleteImage($article->image);
 
         $article->delete($article);
         return redirect()->route('admin.dashboard')->with('success', 'Articolo eliminato con successo!');

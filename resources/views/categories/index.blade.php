@@ -20,6 +20,9 @@
     @else
         @foreach ($categories as $category)
             <x-card>
+                @if ($category->image_url)
+                    <img src="{{ $category->image_url }}" alt="Immagine di {{ $category->name }}" style="max-width: 120px; height: auto;">
+                @endif
                 <h2>{{ $category->name }}</h2>
                 <div class="card-meta">
                     Articoli: {{ $category->articles()->count() }}
