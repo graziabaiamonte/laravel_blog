@@ -8,9 +8,6 @@ use Illuminate\Support\Facades\Storage;
 /**
  * Raccoglie in un unico posto la logica di upload/cancellazione delle immagini,
  * così non la ripetiamo in ogni controller (articoli, categorie, ...).
- *
- * Un "trait" è un blocco di metodi che puoi "incollare" dentro più classi con
- * la parola chiave `use`
  */
 trait HandlesImageUpload
 {
