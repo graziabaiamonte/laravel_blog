@@ -18,6 +18,9 @@ use App\Models\Category;
 // /**
 //  * @mixin IdeHelperArticle
 //  */
+/**
+ * @mixin IdeHelperArticle
+ */
 class Article extends Model
 {
     use HasFactory;

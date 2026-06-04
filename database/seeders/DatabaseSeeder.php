@@ -16,8 +16,8 @@ class DatabaseSeeder extends Seeder
     {
       // ogni seeder dipende da quelli sopra di lui
       $this->call([
-      //   RolesPermissionsSeeder::class,
         UserSeeder::class,
+        RolesPermissionsSeeder::class,
         CategorySeeder::class,
         TagSeeder::class,
         ArticleSeeder::class,

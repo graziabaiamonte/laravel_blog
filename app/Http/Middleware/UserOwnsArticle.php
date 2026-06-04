@@ -11,13 +11,18 @@ class UserOwnsArticle
     /**
      * Handle an incoming request.
      *
-     * Lascia proseguire la richiesta SOLO se l'utente loggato è il proprietario
-     * dell'articolo richiesto nell'URL. Altrimenti blocca con un errore 403.
+     * Lascia proseguire la richiesta se l'utente loggato ha il permesso
+     * 'manage articles' (es. admin) OPPURE è il proprietario dell'articolo
+     * richiesto nell'URL
      *
      * @param  Closure(Request): (Response)  $next
      */
     public function handle(Request $request, Closure $next): Response
     {
+        if ($request->user()->can('manage articles')) {
+            return $next($request);
+        }
+
         // Recupero il parametro {article} dalla rotta
         $article = $request->route('article');
 
@@ -28,8 +33,7 @@ class UserOwnsArticle
             403,
             'Non sei autorizzato a gestire questo articolo.'
         );
-
-        // Tutto ok: la richiesta prosegue verso il controller.
+        
         return $next($request);
     }
 }
