@@ -7,6 +7,7 @@ use App\Models\User;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\View\View;
+use Spatie\Permission\Models\Role;
 
 /**
  *
@@ -30,20 +31,33 @@ class UserController extends Controller
      */
     public function edit(User $user): View
     {
-        return view('users.edit', compact('user'));
+        // Passo al form l'elenco dei ruoli, per popolare il menu a tendina.
+        $roles = Role::orderBy('name', 'asc')->get();
+
+        return view('users.edit', compact('user', 'roles'));
     }
 
     public function update(UpdateUserRequest $request, User $user): RedirectResponse
     {
-        // fill() assegna in massa i campi validati al model
-        $user->fill($request->validated());
+        $validated = $request->validated();
 
-        // ...se l'email è cambiata, l'account non è più "verificato" per la nuova email.
-        // if ($user->isDirty('email')) {
-        //     $user->email_verified_at = null;
-        // }
+        // È l'admin che sta modificando SE STESSO?
+        $isSelf = $user->id === Auth::id();
 
+        if ($isSelf && array_key_exists('role', $validated)) {
+            abort(403, 'Non puoi modificare il tuo stesso ruolo.');
+        }
+
+        // fill() aggiorna nome ed email. Escludo 'role' perché NON è una colonna
+        // della tabella users: il ruolo si gestisce a parte con syncRoles().
+        $user->fill(collect($validated)->except('role')->toArray());
         $user->save();
+
+        // Applico il nuovo ruolo solo se sto modificando un ALTRO utente.
+        // syncRoles() SOSTITUISCE i ruoli con quello scelto (uno solo alla volta).
+        if (! $isSelf && ! empty($validated['role'])) {
+            $user->syncRoles([$validated['role']]);
+        }
 
         return redirect()->route('admin.users.index')->with('success', 'Utente aggiornato con successo!');
     }

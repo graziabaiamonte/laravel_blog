@@ -26,8 +26,6 @@ class UserOwnsArticle
         // Recupero il parametro {article} dalla rotta
         $article = $request->route('article');
 
-        // Confronto il proprietario dell'articolo con l'utente loggato.
-        // Se NON coincidono, blocco la richiesta con un 403
         abort_if(
             (int) $article->user_id !== (int) $request->user()->id,
             403,

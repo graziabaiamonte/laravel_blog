@@ -3,20 +3,13 @@
 namespace App\Http\Requests;
 
 use App\Models\User;
-use Illuminate\Contracts\Validation\ValidationRule;
+// use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 
 /**
- * Validazione per la modifica di un utente QUALSIASI da parte di un altro utente.
+ * Validazione per la modifica di un utente qualsiasi da parte di un altro utente.
  *
- * È molto simile a ProfileUpdateRequest, con UNA differenza importante:
- * - in ProfileUpdateRequest l'utente modifica SE STESSO  -> ignore($this->user()->id)
- * - qui modifichiamo un ALTRO utente, preso dalla rotta -> ignore($this->route('user')->id)
- *
- * "ignore(...)" serve sulla regola unique dell'email: dice a Laravel di NON
- * considerare un errore il fatto che l'email appartenga già all'utente che
- * stiamo modificando (altrimenti non potresti salvare lasciando la stessa email).
  */
 class UpdateUserRequest extends FormRequest
 {
@@ -25,6 +18,8 @@ class UpdateUserRequest extends FormRequest
      */
     public function rules(): array
     {
+        $isSelf = $this->route('user')->id === $this->user()->id;
+
         return [
             'name' => ['required', 'string', 'max:255'],
             'email' => [
@@ -36,6 +31,8 @@ class UpdateUserRequest extends FormRequest
                 // $this->route('user') è l'utente {user} preso dall'URL (route-model binding).
                 Rule::unique(User::class)->ignore($this->route('user')->id),
             ],
+            // 'role' deve essere il nome di un ruolo esistente nella tabella roles.
+            'role' => [$isSelf ? 'nullable' : 'required', Rule::exists('roles', 'name')],
         ];
     }
 }

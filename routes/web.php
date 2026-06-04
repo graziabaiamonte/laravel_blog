@@ -19,8 +19,6 @@ Route::middleware('auth')->prefix('admin')->as('admin.')->group(function () {
     ->middleware(['verified'])
     ->name('dashboard');
 
-    // Creare/pubblicare articoli: serve il permesso 'publish articles'
-    // (ce l'hanno sia admin sia author).
     Route::resource('articles', ArticleController::class)
         ->only(['create', 'store'])
         ->middleware('permission:publish articles');
@@ -42,7 +40,6 @@ Route::middleware('auth')->prefix('admin')->as('admin.')->group(function () {
 
     //  ---------------------------------------------------------------------------------------------
     
-    // Gestione di categorie, tag e utenti: riservata al solo ruolo admin.
     Route::resource('categories', CategoryController::class)
         ->middleware('role:admin');
 
@@ -52,6 +49,7 @@ Route::middleware('auth')->prefix('admin')->as('admin.')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+    
     Route::resource('users', UserController::class)
         ->middleware('role:admin');
 

@@ -6,7 +6,6 @@ use App\Http\Controllers\Controller;
 use App\Models\User;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Http\RedirectResponse;
-// use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\ValidationException;
@@ -38,6 +37,8 @@ class RegisteredUserController extends Controller
             'email' => $validatedData['email'],
             'password' => Hash::make($validatedData['password']),
         ]);
+
+        $user->assignRole('author');
 
         // emette un evento chiamato Registered. Altre parti dell'app possono essere "in ascolto" di questo evento e reagire. Per default Laravel ha un listener che, se l'utente deve verificare l'email, gli invia automaticamente l'email di verifica. È un modo per disaccoppiare il codice: il controller non deve sapere cosa succede dopo.
         event(new Registered($user));

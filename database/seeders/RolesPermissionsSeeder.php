@@ -34,5 +34,11 @@ class RolesPermissionsSeeder extends Seeder
         // --- 4. ASSEGNO IL RUOLO admin AL MIO UTENTE DI SVILUPPO ---
         $dev = User::whereEmail('grazia@gmail.com')->first();
         $dev?->assignRole($admin);
+
+        User::with('roles')->get()->each(function (User $u) use ($author) {
+            if ($u->roles->isEmpty()) {
+                $u->assignRole($author);
+            }
+        });
     }
 }

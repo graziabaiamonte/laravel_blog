@@ -18,12 +18,23 @@ class ArticleController extends Controller
 
     public function index()
     {
+        $user = request()->user();
+
+        // Gli articoli dell'utente loggato
         $articles = Article::with('category', 'tags')
-            ->ownedBy(request()->user())
+            ->ownedBy($user)
             ->orderByDesc('created_at')
             ->get();
 
-        return view('dashboard', compact('articles'));
+        $othersArticles = null;
+        if ($user->can('manage articles')) {
+            $othersArticles = Article::with('category', 'tags', 'user')
+                ->where('user_id', '!=', $user->id)
+                ->orderByDesc('created_at')
+                ->get();
+        }
+
+        return view('dashboard', compact('articles', 'othersArticles'));
     }
 
     /**
