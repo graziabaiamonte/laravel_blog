@@ -11,7 +11,7 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware): void {
-        // Registro un alias (nome breve) per il mio middleware, così posso usarlo
+        // Registrazione alias per il middleware custom, così posso usarlo
         // nelle rotte scrivendo semplicemente 'owns.article'.
         $middleware->alias([
             'owns.article' => \App\Http\Middleware\UserOwnsArticle::class,

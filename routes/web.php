@@ -7,7 +7,7 @@ use App\Http\Controllers\Frontend\ArticleController as FrontendArticleController
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\TagController;
 use App\Http\Controllers\UserController;
-use App\Http\Middleware\UserOwnsArticle;
+// use App\Http\Middleware\UserOwnsArticle;
 
 // HOME PUBBLICA
 Route::get('/', [FrontendArticleController::class, 'index'])->name('home');
@@ -21,9 +21,22 @@ Route::middleware('auth')->prefix('admin')->as('admin.')->group(function () {
 
     Route::resource('articles', ArticleController::class)->only(['create', 'store']);
    
+    // ---------------------------------------------------------------------------------------------
+    // 
+    // 1. versione senza alias, con il nome completo della classe del middleware e importazione con use in cima al file
+    // 
+    // Route::resource('articles', ArticleController::class)
+    // ->only(['edit', 'update', 'destroy'])
+    // ->middleware([UserOwnsArticle::class]);
+
+    // 
+    // 2. versione usando l'alias che ho registrato in bootstrap/app.php
+    // 
     Route::resource('articles', ArticleController::class)
     ->only(['edit', 'update', 'destroy'])
-    ->middleware([UserOwnsArticle::class]);
+    ->middleware(['owns.article']); 
+
+    //  ---------------------------------------------------------------------------------------------
     
     Route::resource('categories', CategoryController::class);
     
