@@ -40,5 +40,13 @@ class ArticleSeeder extends Seeder
             ->recycle($users)
             ->withoutCategory()
             ->create();
+
+        // 5 articoli in BOZZA: NON appariranno sulla home pubblica,
+        // ma li vedremo nella dashboard con il badge "Bozza".
+        Article::factory(5)
+            ->recycle($users)
+            ->recycle($categories)
+            ->draft()
+            ->create();
     }
 }

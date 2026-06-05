@@ -30,7 +30,7 @@ enum Role: string
     {
         return match ($this) {
             self::Admin  => [Permission::PublishArticles, Permission::ManageArticles],
-            self::Author => [Permission::PublishArticles],
+            self::Author => [],
         };
     }
 }

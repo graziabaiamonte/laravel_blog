@@ -22,10 +22,13 @@ Route::middleware('auth')->prefix('admin')->as('admin.')->group(function () {
     ->name('dashboard');
 
     Route::resource('articles', ArticleController::class)
-        ->only(['create', 'store'])
-        // Il middleware di Spatie vuole una stringa "permission:nome": componiamo
-        ->middleware('permission:'.Permission::PublishArticles->value);
-   
+        ->only(['create', 'store']);
+
+    // Cambio STATO (bozza <-> pubblicato): SOLO chi ha 'publish articles'
+    Route::patch('articles/{article}/status', [ArticleController::class, 'updateStatus'])
+        ->middleware('permission:'.Permission::PublishArticles->value)
+        ->name('articles.status');
+
     // ---------------------------------------------------------------------------------------------
     // 
     // 1. versione senza alias, con il nome completo della classe del middleware e importazione con use in cima al file

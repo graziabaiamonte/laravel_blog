@@ -24,4 +24,3 @@ class AppServiceProvider extends ServiceProvider
 }
 
 
-// PER PERSONALIZZARE LE REGOLE DI VALIDAZIONE DELLE PW (di default devono essere minimo 8 caratteri)

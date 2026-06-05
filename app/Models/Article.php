@@ -10,8 +10,9 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Support\Str;
-// use Illuminate\Support\Facades\Storage; 
+// use Illuminate\Support\Facades\Storage;
 use Carbon\Carbon; // libreria per le date di laravel
+use App\Enums\ArticleStatus;
 use App\Models\Category;
 use Spatie\MediaLibrary\HasMedia;                 
 use Spatie\MediaLibrary\InteractsWithMedia;             
@@ -38,6 +39,20 @@ class Article extends Model implements HasMedia
         'category_id',
         // 'image',
     ];
+
+    /**
+     * Conversione automatica dei tipi.
+     * Così $article->status restituisce un enum ArticleStatus (non una stringa)
+     * e possiamo scrivere $article->status === ArticleStatus::Published.
+     *
+     * @return array<string, string>
+     */
+    protected function casts(): array
+    {
+        return [
+            'status' => ArticleStatus::class,
+        ];
+    }
 
     public function registerMediaCollections(): void
     {
@@ -140,10 +155,25 @@ class Article extends Model implements HasMedia
         );
     }
 
+    public function isDraft(): bool
+    {
+        return $this->status === ArticleStatus::Draft;
+    }
+
+    public function isPublished(): bool
+    {
+        return $this->status === ArticleStatus::Published;
+    }
+
+    #[Scope]
+    protected function published(Builder $query): Builder
+    {
+        return $query->where('status', ArticleStatus::Published->value);
+    }
+
     // Scope che filtra gli articoli di uno specifico utente.
     // A differenza degli scope sopra (che usano when() perché il filtro è opzionale),
-    // qui l'utente è SEMPRE obbligatorio: vogliamo solo i suoi articoli.
-    // Lo useremo nella dashboard con Article::ownedBy(auth()->user())->...
+    // qui l'utente è SEMPRE obbligatorio
     #[Scope]
     protected function ownedBy(Builder $query, User $user): Builder
     {

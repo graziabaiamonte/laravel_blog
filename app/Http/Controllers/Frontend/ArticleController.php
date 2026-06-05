@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Frontend;
 
 use App\Http\Controllers\Controller;
+use App\Enums\Permission;
 use App\Models\Article;
 use App\Models\Category;
 use App\Models\Tag;
@@ -11,11 +12,6 @@ use App\Http\Resources\ArticleResource;
 
 /**
  * Controller della parte PUBBLICA del blog.
- *
- * Si occupa SOLO di mostrare gli articoli a chiunque (anche ai non loggati)
- *
- * Le operazioni di gestione (create/store/edit/update/destroy) NON stanno qui,
- * ma nel controller App\Http\Controllers\ArticleController.
  */
 class ArticleController extends Controller
 {
@@ -25,6 +21,7 @@ class ArticleController extends Controller
         $filters = $request->validated();
 
         $articles = Article::with('category', 'tags')
+            ->published() 
             ->search($filters['search'] ?? null)
             ->inCategory($filters['category_id'] ?? null)
             ->withTag($filters['tag_id'] ?? null)
@@ -39,6 +36,17 @@ class ArticleController extends Controller
 
     public function show(Article $article)
     {
+        // la bozza può essere vista solo dal suo autore e dall'admin
+        if ($article->isDraft()) {
+            $user = request()->user();
+
+            $puoVederla = $user
+                && ($user->id === $article->user_id
+                    || $user->can(Permission::ManageArticles->value));
+
+            abort_unless($puoVederla, 404);
+        }
+
         $article->load('category', 'tags');
         return view('articles.show', ['article' => ArticleResource::make($article)]);
     }

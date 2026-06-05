@@ -79,6 +79,23 @@ return [
             'replace_placeholders' => true,
         ],
 
+        // Canale dedicato alle PUBBLICAZIONI di articoli.
+        // 'single' = un unico file che cresce nel tempo (storage/logs/ArticlePublishedLog.log).
+        'article-published' => [
+            'driver' => 'single',
+            'path' => storage_path('logs/ArticlePublishedLog.log'),
+            'level' => 'info',
+            'replace_placeholders' => true,
+        ],
+
+        // Canale dedicato alle ELIMINAZIONI di articoli.
+        'article-deleted' => [
+            'driver' => 'single',
+            'path' => storage_path('logs/ArticleDeletedLog.log'),
+            'level' => 'info',
+            'replace_placeholders' => true,
+        ],
+
         'daily' => [
             'driver' => 'daily',
             'path' => storage_path('logs/laravel.log'),

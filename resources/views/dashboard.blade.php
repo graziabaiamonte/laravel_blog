@@ -41,8 +41,11 @@
                 @foreach ($articles as $article)
                     <x-card>
                         <h2>{{ $article->title }}</h2>
+                        {{-- Badge di stato: l'autore vede subito se la sua roba
+                             è ancora in bozza o è stata pubblicata dall'admin. --}}
+                        <x-status-badge :status="$article->status" />
                         <div class="card-meta">
-                            Pubblicato il: {{ $article->created_at }}
+                            Creato il: {{ $article->created_at }}
                             &middot; Categoria: {{ $article->category?->name ?? 'nessuna' }}
                         </div>
                         @if ($article->tags->isNotEmpty())
@@ -55,6 +58,11 @@
                         <div>
                             {{ $article->excerpt }}
                         </div>
+                        {{-- Dropdown bozza/pubblicato: SOLO l'admin (chi ha il
+                             permesso 'publish articles') lo vede. L'autore no. --}}
+                        @can('publish articles')
+                            <x-status-form :article="$article" />
+                        @endcan
                         <div class="card-actions">
                             <x-button variant="read" :href="route('articles.show', $article->id)">Leggi tutto</x-button>
                             <x-button variant="edit" :href="route('admin.articles.edit', $article->id)">Modifica</x-button>
@@ -82,11 +90,14 @@
                     @foreach ($othersArticles as $article)
                         <x-card>
                             <h2>{{ $article->title }}</h2>
+                            {{-- Badge di stato anche qui: l'admin vede a colpo
+                                 d'occhio quali bozze deve ancora pubblicare. --}}
+                            <x-status-badge :status="$article->status" />
                             <div class="card-meta">
                                 {{-- $article->user?->name: il ? evita errori se l'autore
                                      fosse mancante (es. utente eliminato). --}}
                                 Autore: <strong>{{ $article->user?->name ?? 'sconosciuto' }}</strong>
-                                &middot; Pubblicato il: {{ $article->created_at }}
+                                &middot; Creato il: {{ $article->created_at }}
                                 &middot; Categoria: {{ $article->category?->name ?? 'nessuna' }}
                             </div>
                             @if ($article->tags->isNotEmpty())
@@ -99,6 +110,11 @@
                             <div>
                                 {{ $article->excerpt }}
                             </div>
+                            {{-- Dropdown bozza/pubblicato sugli articoli altrui:
+                                 l'admin ha 'publish articles', quindi lo vede. --}}
+                            @can('publish articles')
+                                <x-status-form :article="$article" />
+                            @endcan
                             {{-- Stessi pulsanti: per l'admin le rotte edit/update/destroy
                                  funzionano anche su articoli altrui grazie al middleware
                                  owns.article (che lascia passare chi ha 'manage articles'). --}}

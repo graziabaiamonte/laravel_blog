@@ -1,12 +1,18 @@
 <?php
 namespace App\Http\Controllers;
 use App\Enums\Permission;
+use App\Enums\ArticleStatus;
+use App\Events\ArticlePublished;
+use App\Events\ArticleDeleted;
 use App\Models\Article;
 use App\Models\Category;
 use App\Models\Tag;
 use App\Http\Requests\StoreArticleRequest;
 use App\Http\Requests\UpdateArticleRequest;
+use Illuminate\Http\Request;
+use Illuminate\Validation\Rule;
 // use App\Traits\HandlesImageUpload; // VECCHIO sistema
+
 /**
  * GESTIONE degli articoli per gli utenti loggati
  *
@@ -20,7 +26,6 @@ class ArticleController extends Controller
     {
         $user = request()->user();
 
-        // Gli articoli dell'utente loggato
         $articles = Article::with('category', 'tags')
             ->ownedBy($user)
             ->orderByDesc('created_at')
@@ -68,6 +73,10 @@ class ArticleController extends Controller
         $article = $request->user()->articles()->create(
             collect($validatedData)->except(['tags', 'image', 'remove_image'])->toArray()
         );
+
+        // Ogni articolo nasce SEMPRE in bozza 
+        $article->status = ArticleStatus::Draft;
+        $article->save();
 
         $article->tags()->sync($validatedData['tags'] ?? []);
 
@@ -125,11 +134,50 @@ class ArticleController extends Controller
     }
 
     /**
+     * Cambia lo STATO dell'articolo (bozza <-> pubblicato).
+     */
+    public function updateStatus(Request $request, Article $article)
+    {
+        // Validiamo che 'status' sia uno dei valori validi dell'enum:
+        // così nessuno può inviare uno stato inventato manomettendo il form.
+        $validated = $request->validate([
+            'status' => ['required', Rule::enum(ArticleStatus::class)],
+        ]);
+
+        // Rule::enum valida la stringa; qui la trasformiamo nell'enum vero.
+        $newStatus = ArticleStatus::from($validated['status']);
+
+        $wasPublished = $article->isPublished();
+
+        $article->status = $newStatus;
+        $article->save();
+
+        // Evento SOLO sulla transizione bozza -> pubblicato:
+        // non quando si rimette in bozza, né quando era già pubblicato.
+        if (! $wasPublished && $article->isPublished()) {
+            ArticlePublished::dispatch($article);
+        }
+
+        return redirect()
+            ->route('admin.dashboard')
+            ->with('success', "Stato aggiornato: «{$article->title}» ora è {$newStatus->label()}.");
+    }
+
+    /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Article $article)
+    public function destroy(Request $request, Article $article)
     {
+        // Catturiamo i dati PRIMA di eliminare: dopo delete() l'articolo non esiste più nel DB
+        $title = $article->title;
+        $deletedBy = $request->user()?->name ?? 'sconosciuto';
+
         $article->delete($article);
+
+        // Avvisiamo il resto dell'app che l'articolo è stato eliminato:
+        // il listener LogArticleDeleted scriverà la riga nel log dedicato.
+        ArticleDeleted::dispatch($title, $deletedBy);
+
         return redirect()->route('admin.dashboard')->with('success', 'Articolo eliminato con successo!');
     }
 }
