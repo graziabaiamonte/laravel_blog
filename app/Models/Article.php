@@ -10,27 +10,41 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Support\Str;
-use Illuminate\Support\Facades\Storage; // per generare l'URL pubblico del file
+// use Illuminate\Support\Facades\Storage; 
 use Carbon\Carbon; // libreria per le date di laravel
 use App\Models\Category;
+use Spatie\MediaLibrary\HasMedia;                 
+use Spatie\MediaLibrary\InteractsWithMedia;             
+// use Spatie\MediaLibrary\MediaCollections\Models\Media;   // il modello Media, usato come type-hint in registerMediaCollections()
 
 
 // /**
 //  * @mixin IdeHelperArticle
 //  */
 /**
- * @mixin IdeHelperArticle
  */
-class Article extends Model
+
+class Article extends Model implements HasMedia
 {
     use HasFactory;
+    use InteractsWithMedia;
+
+    // Nome della media collection per la foto principale dell'articolo
+    public const MEDIA_COVER = 'cover';
 
     protected $fillable = [
         'title',
         'content',
         'category_id',
-        'image',
+        // 'image',
     ];
+
+    public function registerMediaCollections(): void
+    {
+        $this->addMediaCollection(self::MEDIA_COVER)
+            ->singleFile()
+            ->acceptsMimeTypes(config('media.images.mime_types'));
+    }
 
 
     public function user(): BelongsTo
@@ -57,12 +71,26 @@ class Article extends Model
         );
     }
 
-    // Accessor che permette di usare $article->image_url, 
-    // trasformando il percorso salvato (es. "articles/abc.jpg") nell'URL pubblico completo grazie al symlink
-    protected function imageUrl(): Attribute
+    // ─── VECCHIO sistema (NON più usato) ───────────────
+    // Accessor che permetteva di usare $article->image_url,
+    // trasformando il percorso salvato (es. "articles/abc.jpg") nell'URL pubblico completo grazie al symlink.
+    // Dipendeva dalla colonna `image`, ora rimpiazzata dalla Media Library.
+    // protected function imageUrl(): Attribute
+    // {
+    //     return Attribute::make(
+    //         get: fn () => $this->image ? Storage::disk('public')->url($this->image) : null,
+    //     );
+    // }
+
+
+
+    // ─── NUOVO sistema (Spatie Media Library) ─────────────────────────────────
+    // nelle view $article->cover_url ritorna l'URL della cover
+    // o stringa vuota 
+    protected function coverUrl(): Attribute
     {
         return Attribute::make(
-            get: fn () => $this->image ? Storage::disk('public')->url($this->image) : null,
+            get: fn () => $this->getFirstMediaUrl(self::MEDIA_COVER) ?: null,
         );
     }
 

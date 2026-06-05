@@ -6,8 +6,12 @@ use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
 
 /**
- * Raccoglie in un unico posto la logica di upload/cancellazione delle immagini,
- * così non la ripetiamo in ogni controller (articoli, categorie, ...).
+ * VECCHIO SISTEMA — NON PIÙ USATO 
+ *
+ * Prima dell'adozione di Spatie Media Library, questo trait raccoglieva in un
+ * unico posto la logica di upload/cancellazione delle immagini, salvandole su
+ * disco "public" e memorizzando il percorso nella colonna `image`.
+
  */
 trait HandlesImageUpload
 {

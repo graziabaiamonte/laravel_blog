@@ -5,8 +5,7 @@ use App\Models\Category;
 use App\Models\Tag;
 use App\Http\Requests\StoreArticleRequest;
 use App\Http\Requests\UpdateArticleRequest;
-use App\Traits\HandlesImageUpload;
-
+// use App\Traits\HandlesImageUpload; // VECCHIO sistema
 /**
  * GESTIONE degli articoli per gli utenti loggati
  *
@@ -14,7 +13,7 @@ use App\Traits\HandlesImageUpload;
 class ArticleController extends Controller
 {
 
-    use HandlesImageUpload;
+    // use HandlesImageUpload; // VECCHIO sistema
 
     public function index()
     {
@@ -63,14 +62,19 @@ class ArticleController extends Controller
 
         $validatedData = $request->validated();
 
-        $validatedData['image'] = $this->storeImage($request->file('image'), 'articles');
-
-        // $request->user() restituisce l'utente autenticato
+        // $request->user() restituisce l'utente autenticato.
+        // 'image' non è più una colonna: la escludiamo dai dati passati a create().
         $article = $request->user()->articles()->create(
-            collect($validatedData)->except(['tags', 'remove_image'])->toArray()
+            collect($validatedData)->except(['tags', 'image', 'remove_image'])->toArray()
         );
 
         $article->tags()->sync($validatedData['tags'] ?? []);
+
+        // Foto principale -> collection "cover" della Media Library.
+        if ($request->hasFile('image')) {
+            $article->addMediaFromRequest('image')
+                ->toMediaCollection(Article::MEDIA_COVER);
+        }
 
         return redirect()->route('admin.dashboard')->with('success', 'Articolo creato con successo!');
     }
@@ -102,16 +106,19 @@ class ArticleController extends Controller
 
         $dataToUpdate = $validatedData;
 
-        // Togliamo le chiavi che NON sono colonne dirette da aggiornare con fill():
-        // 'tags' (relazione pivot) e 'remove_image' (flag della checkbox).
-        unset($dataToUpdate['tags'], $dataToUpdate['remove_image']);
-
-        // resolveImageUpload gestisce i tre casi (nuovo file / rimozione / invariato),
-        // cancellando da solo il vecchio file quando serve.
-        $dataToUpdate['image'] = $this->resolveImageUpload($request, $article->image, 'articles');
+        // Togliamo le chiavi che NON sono colonne da aggiornare con fill():
+        // 'tags' (relazione pivot), 'image' e 'remove_image' (gestiti dalla Media Library).
+        unset($dataToUpdate['tags'], $dataToUpdate['image'], $dataToUpdate['remove_image']);
 
         $article->fill($dataToUpdate)->save();
         $article->tags()->sync($validatedData['tags'] ?? []);
+
+        if ($request->hasFile('image')) {
+            $article->addMediaFromRequest('image')
+                ->toMediaCollection(Article::MEDIA_COVER);
+        } elseif ($request->boolean('remove_image')) {
+            $article->clearMediaCollection(Article::MEDIA_COVER);
+        }
 
         return redirect()->route('admin.dashboard')->with('success', 'Articolo aggiornato con successo!');
     }
@@ -121,9 +128,6 @@ class ArticleController extends Controller
      */
     public function destroy(Article $article)
     {
-        // Prima il file dal disco, poi il record dal DB.
-        $this->deleteImage($article->image);
-
         $article->delete($article);
         return redirect()->route('admin.dashboard')->with('success', 'Articolo eliminato con successo!');
     }

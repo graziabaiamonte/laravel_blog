@@ -9,25 +9,16 @@ use Illuminate\Translation\PotentiallyTranslatedString;
 
 class ImageFile implements ValidationRule
 {
-    protected array $allowedMimeTypes = [
-        'image/jpeg',
-        'image/png',
-        'image/webp',
-        'image/gif',
-        'image/avif',
-    ];
+    protected array $allowedMimeTypes;
+    protected array $allowedExtensions;
+    protected int $maxKilobytes;
 
-    protected array $allowedExtensions = [
-        'jpg',
-        'jpeg',
-        'png',
-        'webp',
-        'gif',
-        'avif',
-    ];
-
-    // 2 MB
-    protected int $maxKilobytes = 2048;
+    public function __construct()
+    {
+        $this->allowedMimeTypes  = config('media.images.mime_types');
+        $this->allowedExtensions = config('media.images.extensions');
+        $this->maxKilobytes      = config('media.images.max_size');
+    }
 
     /**
      * Run the validation rule.
@@ -43,16 +34,13 @@ class ImageFile implements ValidationRule
             return;
         }
 
-        // getSize() torna i byte, quindi /1024 = kilobyte.
         if ($value->getSize() / 1024 > $this->maxKilobytes) {
             $fail("L'immagine non può superare i {$this->maxKilobytes} KB.");
             return;
         }
 
-        // Controllo del MIME REALE: getMimeType() lo deduce dal contenuto del file,
-        //    non dal nome
         if (! in_array($value->getMimeType(), $this->allowedMimeTypes, true)) {
-            $fail('Il file deve essere un\'immagine (jpeg, png, webp, avif o gif).');
+            $fail('Il file deve essere un\'immagine: ' . implode(', ', $this->allowedExtensions) . '.');
             return;
         }
 

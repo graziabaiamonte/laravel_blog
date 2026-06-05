@@ -5,11 +5,11 @@ namespace App\Http\Controllers;
 use App\Models\Category;
 use App\Http\Requests\StoreCategoryRequest;
 use App\Http\Requests\UpdateCategoryRequest;
-use App\Traits\HandlesImageUpload;
+// use App\Traits\HandlesImageUpload; 
 
 class CategoryController extends Controller
 {
-    use HandlesImageUpload;
+    // use HandlesImageUpload; // VECCHIO sistema
 
     public function index()
     {
@@ -32,9 +32,15 @@ class CategoryController extends Controller
     {
         $data = $request->validated();
 
-        $data['image'] = $this->storeImage($request->file('image'), 'categories');
+        unset($data['image']);
 
-        Category::create($data);
+        $category = Category::create($data);
+
+        if ($request->hasFile('image')) {
+            $category->addMediaFromRequest('image')
+                ->toMediaCollection(Category::MEDIA_IMAGE);
+        }
+
         return redirect()->route('admin.categories.index')->with('success', 'Categoria creata.');
     }
 
@@ -50,12 +56,17 @@ class CategoryController extends Controller
 
         $data = $request->validated();
 
-        $data['image'] = $this->resolveImageUpload($request, $category->image, 'categories');
-
-        // remove_image è solo un flag del form, non una colonna: lo togliamo.
-        unset($data['remove_image']);
+        // 'image' e 'remove_image' non sono colonne: li togliamo prima di update().
+        unset($data['image'], $data['remove_image']);
 
         $category->update($data);
+
+        if ($request->hasFile('image')) {
+            $category->addMediaFromRequest('image')
+                ->toMediaCollection(Category::MEDIA_IMAGE);
+        } elseif ($request->boolean('remove_image')) {
+            $category->clearMediaCollection(Category::MEDIA_IMAGE);
+        }
 
         return redirect()->route('admin.categories.index')->with('success', 'Categoria aggiornata.');
     }
@@ -64,8 +75,6 @@ class CategoryController extends Controller
     {
         $category = Category::findOrFail($id);
 
-        // Prima cancelliamo il file dal disco, poi il record dal DB.
-        $this->deleteImage($category->image);
         $category->delete();
 
         return redirect()->route('admin.categories.index')->with('success', 'Categoria eliminata.');

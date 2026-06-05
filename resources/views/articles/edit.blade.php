@@ -63,9 +63,9 @@
             <label for="image">Immagine</label>
 
             {{-- Anteprima dell'immagine attualmente salvata --}}
-            @if ($article->image_url)
+            @if ($article->cover_url)
                 <div class="current-image">
-                    <img src="{{ $article->image_url }}" alt="Immagine di {{ $article->title }}" style="max-width: 200px; height: auto;">
+                    <img src="{{ $article->cover_url }}" alt="Immagine di {{ $article->title }}" style="max-width: 200px; height: auto;">
                 </div>
 
                 <label>

@@ -15,10 +15,6 @@ class UserSeeder extends Seeder
     {
         User::factory(10)->create();
 
-        // Il MIO utente di sviluppo, sempre uguale, per loggarmi facilmente.
-        // Se l'utente c'è già lo restituisce così com'è; se non c'è lo crea.
-        // Posso rilanciare il seeder quante volte voglio senza errori
-        // di "email duplicata" (cosa che invece succederebbe con create()).
         User::firstOrCreate(
             ['email' => 'grazia@gmail.com'],
             [

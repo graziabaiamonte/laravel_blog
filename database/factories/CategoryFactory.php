@@ -31,7 +31,7 @@ class CategoryFactory extends Factory
             // ->unique() garantisce che ogni categoria abbia una parola diversa
             'name' => fake()->unique()->word(),
 
-            'image' => null,
+            // 'image' => null, // VECCHIO sistema: la colonna non è più gestita (ora c'è la tabella `media`).
         ];
     }
 }

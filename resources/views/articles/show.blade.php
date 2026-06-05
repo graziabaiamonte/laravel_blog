@@ -27,9 +27,9 @@
             </div>
         @endif
 
-        @if ($article->image_url)
+        @if ($article->cover_url)
             <div class="article-image">
-                <img src="{{ $article->image_url }}" alt="Immagine di {{ $article->title }}" style="max-width: 100%; height: 350px; object-fit: cover;">
+                <img src="{{ $article->cover_url }}" alt="Immagine di {{ $article->title }}" style="max-width: 100%; height: 350px; object-fit: cover;">
             </div>
         @endif
 

@@ -42,7 +42,7 @@ class ArticleFactory extends Factory
             // (invece di un array di paragrafi)
             'content' => fake()->paragraphs(3, true),
 
-            'image' => null,
+            // 'image' => null, // VECCHIO sistema: la colonna non è più gestita (ora c'è la tabella `media`).
         ];
     }
 

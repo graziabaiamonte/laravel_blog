@@ -6,6 +6,7 @@ use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
+use Spatie\Permission\Models\Role;
 
 /**
  * @extends Factory<User>
@@ -31,6 +32,18 @@ class UserFactory extends Factory
             'password' => static::$password ??= Hash::make('password'),
             'remember_token' => Str::random(10),
         ];
+    }
+
+    /**
+     * Configura la factory: dopo che l'utente è stato creato gli assegno
+     * automaticamente il ruolo "author"
+     */
+    public function configure(): static
+    {
+        return $this->afterCreating(function (User $user) {
+            $author = Role::firstOrCreate(['name' => 'author']);
+            $user->assignRole($author);
+        });
     }
 
     /**
