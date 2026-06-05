@@ -1,5 +1,6 @@
 <?php
 namespace App\Http\Controllers;
+use App\Enums\Permission;
 use App\Models\Article;
 use App\Models\Category;
 use App\Models\Tag;
@@ -26,7 +27,7 @@ class ArticleController extends Controller
             ->get();
 
         $othersArticles = null;
-        if ($user->can('manage articles')) {
+        if ($user->can(Permission::ManageArticles->value)) {
             $othersArticles = Article::with('category', 'tags', 'user')
                 ->where('user_id', '!=', $user->id)
                 ->orderByDesc('created_at')

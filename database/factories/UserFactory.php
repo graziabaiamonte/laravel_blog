@@ -2,11 +2,12 @@
 
 namespace Database\Factories;
 
+use App\Enums\Role;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
-use Spatie\Permission\Models\Role;
+use Spatie\Permission\Models\Role as SpatieRole;
 
 /**
  * @extends Factory<User>
@@ -41,7 +42,7 @@ class UserFactory extends Factory
     public function configure(): static
     {
         return $this->afterCreating(function (User $user) {
-            $author = Role::firstOrCreate(['name' => 'author']);
+            $author = SpatieRole::firstOrCreate(['name' => Role::Author->value]);
             $user->assignRole($author);
         });
     }

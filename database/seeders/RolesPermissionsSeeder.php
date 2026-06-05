@@ -2,10 +2,14 @@
 
 namespace Database\Seeders;
 
+use App\Enums\Permission;
+use App\Enums\Role;
 use App\Models\User;
 use Illuminate\Database\Seeder;
-use Spatie\Permission\Models\Permission;
-use Spatie\Permission\Models\Role;
+// I modelli di Spatie si chiamano anch'essi Role/Permission: per evitare il
+// conflitto di nome con i NOSTRI enum, qui li importiamo con un alias.
+use Spatie\Permission\Models\Permission as SpatiePermission;
+use Spatie\Permission\Models\Role as SpatieRole;
 use Spatie\Permission\PermissionRegistrar;
 
 class RolesPermissionsSeeder extends Seeder
@@ -19,20 +23,22 @@ class RolesPermissionsSeeder extends Seeder
         app(PermissionRegistrar::class)->forgetCachedPermissions();
 
         // --- 1. I PERMESSI ---
-        // firstOrCreate evita duplicati se rilancio il seeder.
-        $publish = Permission::firstOrCreate(['name' => 'publish articles']);
-        $manage  = Permission::firstOrCreate(['name' => 'manage articles']);
+        // Creo nel DB un record per OGNI caso dell'enum Permission.
+        foreach (Permission::cases() as $permission) {
+            SpatiePermission::firstOrCreate(['name' => $permission->value]);
+        }
 
-        // --- 2. I RUOLI ---
-        $admin  = Role::firstOrCreate(['name' => 'admin']);
-        $author = Role::firstOrCreate(['name' => 'author']);
+        // --- 2. I RUOLI + collegamento dei permessi ---
+        foreach (Role::cases() as $role) {
+            $spatieRole = SpatieRole::firstOrCreate(['name' => $role->value]);
 
-        // --- 3. COLLEGO I PERMESSI AI RUOLI ---
-        $admin->syncPermissions([$publish, $manage]);
-        $author->syncPermissions([$publish]);
+            $spatieRole->syncPermissions(
+                array_map(fn (Permission $p) => $p->value, $role->permissions())
+            );
+        }
 
-        // --- 4. ASSEGNO IL RUOLO admin AL MIO UTENTE DI SVILUPPO ---
+        // --- 3. ASSEGNO il ruolo admin AL MIO UTENTE DI SVILUPPO ---
         $dev = User::whereEmail('grazia@gmail.com')->first();
-        $dev?->assignRole($admin);
+        $dev?->assignRole(Role::Admin->value);
     }
 }

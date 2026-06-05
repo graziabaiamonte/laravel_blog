@@ -2,6 +2,7 @@
 
 namespace App\Http\Middleware;
 
+use App\Enums\Permission;
 use Closure;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -11,15 +12,11 @@ class UserOwnsArticle
     /**
      * Handle an incoming request.
      *
-     * Lascia proseguire la richiesta se l'utente loggato ha il permesso
-     * 'manage articles' (es. admin) OPPURE è il proprietario dell'articolo
-     * richiesto nell'URL
-     *
      * @param  Closure(Request): (Response)  $next
      */
     public function handle(Request $request, Closure $next): Response
     {
-        if ($request->user()->can('manage articles')) {
+        if ($request->user()->can(Permission::ManageArticles->value)) {
             return $next($request);
         }
 

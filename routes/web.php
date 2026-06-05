@@ -1,5 +1,7 @@
 <?php
 
+use App\Enums\Permission;
+use App\Enums\Role;
 use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ArticleController;
@@ -21,7 +23,8 @@ Route::middleware('auth')->prefix('admin')->as('admin.')->group(function () {
 
     Route::resource('articles', ArticleController::class)
         ->only(['create', 'store'])
-        ->middleware('permission:publish articles');
+        // Il middleware di Spatie vuole una stringa "permission:nome": componiamo
+        ->middleware('permission:'.Permission::PublishArticles->value);
    
     // ---------------------------------------------------------------------------------------------
     // 
@@ -41,17 +44,17 @@ Route::middleware('auth')->prefix('admin')->as('admin.')->group(function () {
     //  ---------------------------------------------------------------------------------------------
     
     Route::resource('categories', CategoryController::class)
-        ->middleware('role:admin');
+        ->middleware('role:'.Role::Admin->value);
 
     Route::resource('tags', TagController::class)
-        ->middleware('role:admin');
+        ->middleware('role:'.Role::Admin->value);
 
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
     
     Route::resource('users', UserController::class)
-        ->middleware('role:admin');
+        ->middleware('role:'.Role::Admin->value);
 
 });
 
