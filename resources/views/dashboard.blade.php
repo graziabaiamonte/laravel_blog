@@ -43,7 +43,7 @@
                         <h2>{{ $article->title }}</h2>
                         {{-- Badge di stato: l'autore vede subito se la sua roba
                              è ancora in bozza o è stata pubblicata dall'admin. --}}
-                        <x-status-badge :status="$article->status" />
+                        <x-status-badge :status="$article->status" :id="$article->id" />
                         <div class="card-meta">
                             Creato il: {{ $article->created_at }}
                             &middot; Categoria: {{ $article->category?->name ?? 'nessuna' }}
@@ -92,7 +92,7 @@
                             <h2>{{ $article->title }}</h2>
                             {{-- Badge di stato anche qui: l'admin vede a colpo
                                  d'occhio quali bozze deve ancora pubblicare. --}}
-                            <x-status-badge :status="$article->status" />
+                            <x-status-badge :status="$article->status" :id="$article->id" />
                             <div class="card-meta">
                                 {{-- $article->user?->name: il ? evita errori se l'autore
                                      fosse mancante (es. utente eliminato). --}}

@@ -36,5 +36,10 @@
                 @endif
             </main>
         </div>
+
+        {{-- Punto in cui le singole viste possono "appendere" i propri script
+             con @push('scripts'). Va in fondo al body così l'HTML esiste già
+             quando il JavaScript parte. --}}
+        @stack('scripts')
     </body>
 </html>

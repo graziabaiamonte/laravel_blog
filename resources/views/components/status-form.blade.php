@@ -8,7 +8,8 @@
      'permission:publish articles', quindi è blindata anche lato server. --}}
 <form method="POST"
       action="{{ route('admin.articles.status', $article->id) }}"
-      class="status-form">
+      class="status-form"
+      data-article-id="{{ $article->id }}">
     @csrf
     {{-- La rotta è un PATCH: in HTML i form fanno solo GET/POST, quindi
          @method('PATCH') aggiunge il campo nascosto che Laravel interpreta. --}}

@@ -134,12 +134,11 @@ class ArticleController extends Controller
     }
 
     /**
-     * Cambia lo STATO dell'articolo (bozza <-> pubblicato).
+     * Cambia lo STATO dell'articolo 
      */
     public function updateStatus(Request $request, Article $article)
     {
-        // Validiamo che 'status' sia uno dei valori validi dell'enum:
-        // così nessuno può inviare uno stato inventato manomettendo il form.
+        // Validiamo che 'status' sia uno dei valori validi dell'enum
         $validated = $request->validate([
             'status' => ['required', Rule::enum(ArticleStatus::class)],
         ]);
@@ -158,9 +157,25 @@ class ArticleController extends Controller
             ArticlePublished::dispatch($article);
         }
 
+        $message = "Stato aggiornato: «{$article->title}» ora è {$newStatus->label()}.";
+
+        // BIVIO sincrono / asincrono:
+        // - Se la richiesta arriva via AJAX, fetch() manda l'header "Accept: application/json":
+        //   wantsJson() diventa true -> rispondiamo con JSON e NESSUN ricaricamento di pagina.
+        // - Altrimenti vecchio redirect
+        if ($request->wantsJson()) {
+            return response()->json([
+                'success'     => true,
+                'status'      => $newStatus->value,    
+                'label'       => $newStatus->label(),  
+                'isPublished' => $article->isPublished(),
+                'message'     => $message,
+            ]);
+        }
+
         return redirect()
             ->route('admin.dashboard')
-            ->with('success', "Stato aggiornato: «{$article->title}» ora è {$newStatus->label()}.");
+            ->with('success', $message);
     }
 
     /**
@@ -174,8 +189,7 @@ class ArticleController extends Controller
 
         $article->delete($article);
 
-        // Avvisiamo il resto dell'app che l'articolo è stato eliminato:
-        // il listener LogArticleDeleted scriverà la riga nel log dedicato.
+        // Avvisiamo il resto dell'app che l'articolo è stato eliminato
         ArticleDeleted::dispatch($title, $deletedBy);
 
         return redirect()->route('admin.dashboard')->with('success', 'Articolo eliminato con successo!');
