@@ -34,3 +34,18 @@ class UpdateArticleRequest extends FormRequest
         ];
     }
 }
+
+
+// public function rules(): array {
+//     $rules = [
+//         'campo' => 'rules',
+//        ecc...
+//     ]
+
+//     // logica condizionale
+//     if( controlla che sia admin) {
+//       $rules['status'] = controlla che sia nell'enum
+//     }
+
+//      return $rules;
+// }
