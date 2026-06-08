@@ -152,9 +152,13 @@ class ArticleController extends Controller
         $article->save();
 
         // Evento SOLO sulla transizione bozza -> pubblicato:
+        // if (! $wasPublished && $article->isPublished()) {
+        //    // L'utente riceve subito il JSON; l'evento (e i suoi listener lenti) gira dopo (utile ad esempio quando il listener invia email)
+        //    defer(fn () => ArticlePublished::dispatch($article));
+        // }
+
         if (! $wasPublished && $article->isPublished()) {
-           // L'utente riceve subito il JSON; l'evento (e i suoi listener lenti) gira dopo (utile ad esempio quando il listener invia email)
-           defer(fn () => ArticlePublished::dispatch($article));
+            ArticlePublished::dispatch($article);
         }
 
         $message = "Stato aggiornato: «{$article->title}» ora è {$newStatus->label()}.";
