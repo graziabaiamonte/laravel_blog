@@ -18,9 +18,7 @@ class ArticlePublished
     /**
      * Create a new event instance.
      */
-    public function __construct(
-        public Article $article
-        ){
+    public function __construct(public Article $article){
     }
 
     /**

@@ -3,12 +3,14 @@ namespace App\Http\Controllers;
 use App\Enums\Permission;
 use App\Enums\ArticleStatus;
 use App\Events\ArticlePublished;
+use App\Events\ArticleCreated;
 use App\Events\ArticleDeleted;
 use App\Models\Article;
 use App\Models\Category;
 use App\Models\Tag;
 use App\Http\Requests\StoreArticleRequest;
 use App\Http\Requests\UpdateArticleRequest;
+use Event;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
 // use App\Traits\HandlesImageUpload; // VECCHIO sistema
@@ -86,6 +88,8 @@ class ArticleController extends Controller
                 ->toMediaCollection(Article::MEDIA_COVER);
         }
 
+        ArticleCreated::dispatch($article);
+
         return redirect()->route('admin.dashboard')->with('success', 'Articolo creato con successo!');
     }
 
@@ -153,8 +157,13 @@ class ArticleController extends Controller
 
         // Evento SOLO sulla transizione bozza -> pubblicato:
         // if (! $wasPublished && $article->isPublished()) {
-        //    // L'utente riceve subito il JSON; l'evento (e i suoi listener lenti) gira dopo (utile ad esempio quando il listener invia email)
+           // L'utente riceve subito il JSON; l'evento (e i suoi listener lenti) gira dopo (utile ad esempio quando il listener invia email)
         //    defer(fn () => ArticlePublished::dispatch($article));
+
+        // Event::defer(function (ArticlePublished)use ($article, $newStatus) {
+        //     $article->status = $newStatus;
+        //     $article->save();
+        // }, ['ArticlePublished']);
         // }
 
         if (! $wasPublished && $article->isPublished()) {
