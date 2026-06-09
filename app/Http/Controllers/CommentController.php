@@ -27,7 +27,24 @@ class CommentController extends Controller
 
         CommentSubmitted::dispatch($comment);
 
-        return back()->with('success', 'Commento inviato! Sarà visibile dopo l’approvazione del proprietario dell’articolo.');
+        $message = 'Commento inviato! Sarà visibile dopo l’approvazione del proprietario dell’articolo.';
+
+        // BIVIO sincrono / asincrono (stesso schema di ArticleController@updateStatus)
+        if (request()->wantsJson()) {
+            return response()->json([
+                'success' => true,
+                'message' => $message,
+                'comment' => [
+                    'id' => $comment->id,
+                    'author' => $comment->user->name,
+                    'body' => $comment->body,
+                    'created_at' => $comment->created_at,
+                    'isPending' => $comment->isPending(),
+                ],
+            ]);
+        }
+
+        return back()->with('success', $message);
     }
 
     public function approve(Comment $comment)
