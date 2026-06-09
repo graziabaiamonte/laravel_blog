@@ -1,12 +1,13 @@
 <?php
 
 use App\Models\User;
+use function Pest\Laravel\actingAs;
+use function Pest\Laravel\assertGuest;
 
 test('profile page is displayed', function () {
     $user = User::factory()->create();
 
-    $response = $this
-        ->actingAs($user)
+    $response = actingAs($user)
         ->get('/admin/profile');
 
     $response->assertOk();
@@ -15,8 +16,7 @@ test('profile page is displayed', function () {
 test('profile information can be updated', function () {
     $user = User::factory()->create();
 
-    $response = $this
-        ->actingAs($user)
+    $response = actingAs($user)
         ->patch('/admin/profile', [
             'name' => 'Test User',
             'email' => 'test@example.com',
@@ -36,8 +36,7 @@ test('profile information can be updated', function () {
 test('email verification status is unchanged when the email address is unchanged', function () {
     $user = User::factory()->create();
 
-    $response = $this
-        ->actingAs($user)
+    $response = actingAs($user)
         ->patch('/admin/profile', [
             'name' => 'Test User',
             'email' => $user->email,
@@ -53,8 +52,7 @@ test('email verification status is unchanged when the email address is unchanged
 test('user can delete their account', function () {
     $user = User::factory()->create();
 
-    $response = $this
-        ->actingAs($user)
+    $response = actingAs($user)
         ->delete('/admin/profile', [
             'password' => 'password',
         ]);
@@ -63,15 +61,14 @@ test('user can delete their account', function () {
         ->assertSessionHasNoErrors()
         ->assertRedirect('/');
 
-    $this->assertGuest();
+    assertGuest();
     $this->assertNull($user->fresh());
 });
 
 test('correct password must be provided to delete account', function () {
     $user = User::factory()->create();
 
-    $response = $this
-        ->actingAs($user)
+    $response = actingAs($user)
         ->from('/admin/profile')
         ->delete('/admin/profile', [
             'password' => 'wrong-password',

@@ -2,12 +2,13 @@
 
 use App\Models\User;
 use Illuminate\Support\Facades\Hash;
+use function Pest\Laravel\actingAs;
 
 test('password can be updated', function () {
     $user = User::factory()->create();
 
-    $response = $this
-        ->actingAs($user)
+    $response =
+        actingAs($user)
         ->from('/profile')
         ->put('/password', [
             'current_password' => 'password',
@@ -25,8 +26,7 @@ test('password can be updated', function () {
 test('correct password must be provided to update password', function () {
     $user = User::factory()->create();
 
-    $response = $this
-        ->actingAs($user)
+    $response = actingAs($user)
         ->from('/profile')
         ->put('/password', [
             'current_password' => 'wrong-password',
