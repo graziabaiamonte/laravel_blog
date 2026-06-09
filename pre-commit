@@ -1,0 +1,29 @@
+#!/bin/sh
+
+# NOTE: Once this file has been installed into the .git/hooks/ folder,
+# I've no clue how it can be tracked into the repo, as the .git/ folder is excluded by default.
+# This makes this script not portable across different machines.
+
+# Run the tests in the sail environment. We're assuming sail's up. 
+exec="docker exec -t $(docker ps -q --filter 'name=laravel.test')"
+
+# Run PHP linter for PHP files
+php_files=$(git diff --cached --name-only --diff-filter=ACMR -- '*.php');
+
+if [ -n "$php_files" ]; then
+    $exec vendor/bin/pint $php_files -q
+    git add $php_files
+fi
+
+# Run ESLint with Prettier for JavaScript and TypeScript files
+js_ts_files=$(git diff --cached --name-only --diff-filter=ACMR -- '*.js' '*.jsx' '*.ts' '*.tsx')
+if [ -n "$js_ts_files" ]; then
+    $exec npx prettier --ignore-unknown --write $js_ts_files # make Prettier fix formatting errors first 
+    $exec npx eslint $js_ts_files # then check for linting errors without fixing them automatically
+    eslint_exit_code=$? # abort commit in case of linting errors to fix them manually
+    if [ $eslint_exit_code -ne 0 ]; then
+        echo "ESLint found errors. Aborting commit."
+        exit 1
+    fi
+    git add $js_ts_files
+fi
