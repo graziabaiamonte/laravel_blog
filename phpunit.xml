@@ -33,3 +33,5 @@
         <env name="NIGHTWATCH_ENABLED" value="false"/>
     </php>
 </phpunit>
+
+<!-- file che crea un ambiente isolato per i test senza andare a toccare i dati veri  -->

@@ -4,6 +4,7 @@ namespace App\Listeners;
 
 use App\Events\ArticleCreated;
 use App\Notifications\ArticleCreated as ArticleCreatedNotification;
+//  use use Illuminate\Support\Facades\Notification;
 
 class SendArticleCreatedNotification
 {
@@ -23,5 +24,9 @@ class SendArticleCreatedNotification
         $event->article->user->notify(
             new ArticleCreatedNotification($event->article)
         );
+
+
+        // utilizzando la facade, utile per inviare a più utenti 
+        // Notification::send($users, new ArticleCreatedNotification($event->article));
     }
 }
