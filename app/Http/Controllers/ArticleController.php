@@ -1,27 +1,28 @@
 <?php
+
 namespace App\Http\Controllers;
-use App\Enums\Permission;
+
 use App\Enums\ArticleStatus;
-use App\Events\ArticlePublished;
+use App\Enums\Permission;
 use App\Events\ArticleCreated;
 use App\Events\ArticleDeleted;
+use App\Events\ArticlePublished;
+use App\Http\Requests\StoreArticleRequest;
+use App\Http\Requests\UpdateArticleRequest;
 use App\Models\Article;
 use App\Models\Category;
 use App\Models\Tag;
-use App\Http\Requests\StoreArticleRequest;
-use App\Http\Requests\UpdateArticleRequest;
 use Event;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
+
 // use App\Traits\HandlesImageUpload; // VECCHIO sistema
 
 /**
  * GESTIONE degli articoli per gli utenti loggati
- *
  */
 class ArticleController extends Controller
 {
-
     // use HandlesImageUpload; // VECCHIO sistema
 
     public function index()
@@ -76,7 +77,7 @@ class ArticleController extends Controller
             collect($validatedData)->except(['tags', 'image', 'remove_image'])->toArray()
         );
 
-        // Ogni articolo nasce SEMPRE in bozza 
+        // Ogni articolo nasce SEMPRE in bozza
         $article->status = ArticleStatus::Draft;
         $article->save();
 
@@ -96,7 +97,7 @@ class ArticleController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-     public function edit(Article $article)
+    public function edit(Article $article)
     {
         // carica i tag attualmente associati a quell'articolo
         $article->load('tags');
@@ -138,7 +139,7 @@ class ArticleController extends Controller
     }
 
     /**
-     * Cambia lo STATO dell'articolo 
+     * Cambia lo STATO dell'articolo
      */
     public function updateStatus(Request $request, Article $article)
     {
@@ -157,7 +158,7 @@ class ArticleController extends Controller
 
         // Evento SOLO sulla transizione bozza -> pubblicato:
         // if (! $wasPublished && $article->isPublished()) {
-           // L'utente riceve subito il JSON; l'evento (e i suoi listener lenti) gira dopo (utile ad esempio quando il listener invia email)
+        // L'utente riceve subito il JSON; l'evento (e i suoi listener lenti) gira dopo (utile ad esempio quando il listener invia email)
         //    defer(fn () => ArticlePublished::dispatch($article));
 
         // Event::defer(function (ArticlePublished)use ($article, $newStatus) {
@@ -178,11 +179,11 @@ class ArticleController extends Controller
         // - Altrimenti vecchio redirect
         if ($request->wantsJson()) {
             return response()->json([
-                'success'     => true,
-                'status'      => $newStatus->value,    
-                'label'       => $newStatus->label(),  
+                'success' => true,
+                'status' => $newStatus->value,
+                'label' => $newStatus->label(),
                 'isPublished' => $article->isPublished(),
-                'message'     => $message,
+                'message' => $message,
             ]);
         }
 

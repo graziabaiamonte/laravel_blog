@@ -2,11 +2,11 @@
 
 // importo il seeder poichè nel db di test i ruoli non esistono, quindi il seeder va lanciato prima di $response = $this->post nel secondo test
 use Database\Seeders\RolesPermissionsSeeder;
-use function Pest\Laravel\seed;
+
+use function Pest\Laravel\assertAuthenticated;
 use function Pest\Laravel\get;
 use function Pest\Laravel\post;
-use function Pest\Laravel\assertAuthenticated;
-
+use function Pest\Laravel\seed;
 
 test('registration screen can be rendered', function () {
     $response = get('/register');
@@ -15,7 +15,7 @@ test('registration screen can be rendered', function () {
 });
 
 test('new users can register', function () {
-    seed(RolesPermissionsSeeder::class); 
+    seed(RolesPermissionsSeeder::class);
 
     $response = post('/register', [
         'name' => 'Test User',

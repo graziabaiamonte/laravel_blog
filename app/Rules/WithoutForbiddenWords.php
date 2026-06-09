@@ -28,7 +28,8 @@ class WithoutForbiddenWords implements ValidationRule
 
         foreach ($this->forbiddenWords as $word) {
             if (stripos($value, $word) !== false) {
-                $fail("The :attribute contains forbidden words.");
+                $fail('The :attribute contains forbidden words.');
+
                 return;
             }
         }

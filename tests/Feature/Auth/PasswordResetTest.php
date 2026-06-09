@@ -3,9 +3,9 @@
 use App\Models\User;
 use Illuminate\Auth\Notifications\ResetPassword;
 use Illuminate\Support\Facades\Notification;
-use function Pest\Laravel\post;
-use function Pest\Laravel\get;
 
+use function Pest\Laravel\get;
+use function Pest\Laravel\post;
 
 test('reset password link screen can be rendered', function () {
     $response = get('/forgot-password');

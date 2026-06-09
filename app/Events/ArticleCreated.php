@@ -15,6 +15,5 @@ class ArticleCreated
      */
     public function __construct(
         public Article $article
-    ) {
-    }
+    ) {}
 }

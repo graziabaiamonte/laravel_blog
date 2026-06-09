@@ -16,7 +16,7 @@ enum Role: string
     public function label(): string
     {
         return match ($this) {
-            self::Admin  => 'Amministratore',
+            self::Admin => 'Amministratore',
             self::Author => 'Autore',
         };
     }
@@ -29,7 +29,7 @@ enum Role: string
     public function permissions(): array
     {
         return match ($this) {
-            self::Admin  => [Permission::PublishArticles, Permission::ManageArticles],
+            self::Admin => [Permission::PublishArticles, Permission::ManageArticles],
             self::Author => [],
         };
     }

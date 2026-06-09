@@ -82,9 +82,8 @@ class LoginRequest extends FormRequest
 
     /**
      * Get the rate limiting throttle key for the request.
-     * 
+     *
      * genera la chiave del rate limiter come email|ip, così l'attaccante non può bloccarti l'account semplicemente provando da un altro IP.
-
      */
     public function throttleKey(): string
     {
@@ -92,4 +91,3 @@ class LoginRequest extends FormRequest
         return Str::transliterate(Str::lower($this->string('email')).'|'.$this->ip());
     }
 }
-

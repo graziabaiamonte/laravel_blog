@@ -8,7 +8,7 @@ use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Log;
 
 // nome con con il quale lancio il command
-#[Signature('app:scrivi-log')] 
+#[Signature('app:scrivi-log')]
 
 #[Description('Scrive un messaggio nel file di log dedicato')]
 

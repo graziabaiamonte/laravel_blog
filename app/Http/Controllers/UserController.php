@@ -10,9 +10,8 @@ use Illuminate\View\View;
 use Spatie\Permission\Models\Role;
 
 /**
- *
  * Permette all'utente loggato di vedere, modificare ed eliminare
- * gli altri utenti. 
+ * gli altri utenti.
  */
 class UserController extends Controller
 {

@@ -14,9 +14,7 @@ class ArticleCreated extends Notification
     /**
      * Create a new notification instance.
      */
-    public function __construct(public Article $article)
-    {
-    }
+    public function __construct(public Article $article) {}
 
     /**
      * Get the notification's delivery channels.
@@ -50,7 +48,7 @@ class ArticleCreated extends Notification
     {
         return [
             'article_id' => $this->article->id,
-            'title'      => $this->article->title,
+            'title' => $this->article->title,
         ];
     }
 }

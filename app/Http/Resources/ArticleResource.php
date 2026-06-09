@@ -23,6 +23,5 @@ class ArticleResource extends JsonResource
     }
 }
 
-
 // ------- FILE NON USATO -------
 // esempio per capire com'è strutturato un Resource, non è usato nel progetto poichè fatto con blade

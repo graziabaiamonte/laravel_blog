@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Middleware\UserOwnsArticle;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
@@ -17,11 +18,11 @@ return Application::configure(basePath: dirname(__DIR__))
         // Registrazione alias per il middleware custom, così posso usarlo
         // nelle rotte scrivendo semplicemente 'owns.article'.
         $middleware->alias([
-            'owns.article' => \App\Http\Middleware\UserOwnsArticle::class,
+            'owns.article' => UserOwnsArticle::class,
 
             // Alias dei middleware di spatie/laravel-permission
-            'role'               => RoleMiddleware::class,
-            'permission'         => PermissionMiddleware::class,
+            'role' => RoleMiddleware::class,
+            'permission' => PermissionMiddleware::class,
             'role_or_permission' => RoleOrPermissionMiddleware::class,
         ]);
     })

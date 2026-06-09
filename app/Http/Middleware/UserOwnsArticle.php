@@ -28,7 +28,7 @@ class UserOwnsArticle
             403,
             'Non sei autorizzato a gestire questo articolo.'
         );
-        
+
         return $next($request);
     }
 }

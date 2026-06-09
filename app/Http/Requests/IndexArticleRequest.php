@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests;
 
+use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
 
 class IndexArticleRequest extends FormRequest
@@ -17,14 +18,14 @@ class IndexArticleRequest extends FormRequest
     /**
      * Get the validation rules that apply to the request.
      *
-     * @return array<string, \Illuminate\Contracts\Validation\ValidationRule|array<mixed>|string>
+     * @return array<string, ValidationRule|array<mixed>|string>
      */
     public function rules(): array
     {
         return [
-            'search'      => 'nullable|string|max:100',
+            'search' => 'nullable|string|max:100',
             'category_id' => 'nullable|integer|exists:categories,id',
-            'tag_id'      => 'nullable|integer|exists:tags,id',
+            'tag_id' => 'nullable|integer|exists:tags,id',
         ];
     }
 }

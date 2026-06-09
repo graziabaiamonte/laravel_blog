@@ -2,10 +2,11 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Category;
 use App\Http\Requests\StoreCategoryRequest;
 use App\Http\Requests\UpdateCategoryRequest;
-// use App\Traits\HandlesImageUpload; 
+use App\Models\Category;
+
+// use App\Traits\HandlesImageUpload;
 
 class CategoryController extends Controller
 {
@@ -14,6 +15,7 @@ class CategoryController extends Controller
     public function index()
     {
         $categories = Category::orderByDesc('created_at')->get();
+
         return view('categories.index', compact('categories'));
     }
 
@@ -25,6 +27,7 @@ class CategoryController extends Controller
     public function show(string $id)
     {
         $category = Category::with('articles')->findOrFail($id);
+
         return view('categories.show', compact('category'));
     }
 
@@ -47,6 +50,7 @@ class CategoryController extends Controller
     public function edit(string $id)
     {
         $category = Category::findOrFail($id);
+
         return view('categories.edit', compact('category'));
     }
 

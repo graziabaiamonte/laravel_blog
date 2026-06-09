@@ -8,9 +8,8 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 // use Illuminate\Support\Facades\Storage; // per generare l'URL pubblico del file (quando non usavo Spatie Media Library)
 use Illuminate\Support\Str;
-use App\Models\IdeHelperCategory;
-use Spatie\MediaLibrary\HasMedia;                     
-use Spatie\MediaLibrary\InteractsWithMedia;          
+use Spatie\MediaLibrary\HasMedia;
+use Spatie\MediaLibrary\InteractsWithMedia;
 
 /**
  * @mixin IdeHelperCategory
@@ -44,7 +43,6 @@ class Category extends Model implements HasMedia
             ->acceptsMimeTypes(config('media.images.mime_types'));
     }
 
-
     protected function name(): Attribute
     {
         return Attribute::make(
@@ -61,8 +59,6 @@ class Category extends Model implements HasMedia
     //         get: fn () => $this->image ? Storage::disk('public')->url($this->image) : null,
     //     );
     // }
-
-
 
     // ─── NUOVO sistema (Spatie Media Library) ─────────────────────────────────
     // l'URL arriva dalla collection "image" della Media Library invece che dalla colonna

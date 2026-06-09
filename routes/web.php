@@ -2,13 +2,14 @@
 
 use App\Enums\Permission;
 use App\Enums\Role;
-use App\Http\Controllers\ProfileController;
-use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ArticleController;
-use App\Http\Controllers\Frontend\ArticleController as FrontendArticleController;
 use App\Http\Controllers\CategoryController;
+use App\Http\Controllers\Frontend\ArticleController as FrontendArticleController;
+use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\TagController;
 use App\Http\Controllers\UserController;
+use Illuminate\Support\Facades\Route;
+
 // use App\Http\Middleware\UserOwnsArticle;
 
 // HOME PUBBLICA
@@ -16,10 +17,10 @@ Route::get('/', [FrontendArticleController::class, 'index'])->name('home');
 
 // Parte di GESTIONE degli articoli (solo utenti loggati).
 Route::middleware('auth')->prefix('admin')->as('admin.')->group(function () {
-    
+
     Route::get('/', [ArticleController::class, 'index'])
-    ->middleware(['verified'])
-    ->name('dashboard');
+        ->middleware(['verified'])
+        ->name('dashboard');
 
     Route::resource('articles', ArticleController::class)
         ->only(['create', 'store']);
@@ -30,22 +31,22 @@ Route::middleware('auth')->prefix('admin')->as('admin.')->group(function () {
         ->name('articles.status');
 
     // ---------------------------------------------------------------------------------------------
-    // 
+    //
     // 1. versione senza alias, con il nome completo della classe del middleware e importazione con use in cima al file
-    // 
+    //
     // Route::resource('articles', ArticleController::class)
     // ->only(['edit', 'update', 'destroy'])
     // ->middleware([UserOwnsArticle::class]);
 
-    // 
+    //
     // 2. versione usando l'alias che ho registrato in bootstrap/app.php
-    // 
+    //
     Route::resource('articles', ArticleController::class)
-    ->only(['edit', 'update', 'destroy'])
-    ->middleware(['owns.article']); 
+        ->only(['edit', 'update', 'destroy'])
+        ->middleware(['owns.article']);
 
     //  ---------------------------------------------------------------------------------------------
-    
+
     Route::resource('categories', CategoryController::class)
         ->middleware('role:'.Role::Admin->value);
 
@@ -55,7 +56,7 @@ Route::middleware('auth')->prefix('admin')->as('admin.')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
-    
+
     Route::resource('users', UserController::class)
         ->middleware('role:'.Role::Admin->value);
 
@@ -63,6 +64,5 @@ Route::middleware('auth')->prefix('admin')->as('admin.')->group(function () {
 
 // Parte PUBBLICA degli articoli
 Route::resource('articles', FrontendArticleController::class)->only(['index', 'show']);
-
 
 require __DIR__.'/auth.php';

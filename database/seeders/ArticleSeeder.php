@@ -35,7 +35,7 @@ class ArticleSeeder extends Seeder
                 $article->tags()->attach($tagIdsCasuali);
             });
 
-        // 3 articoli senza categoria, usando lo state 
+        // 3 articoli senza categoria, usando lo state
         Article::factory(3)
             ->recycle($users)
             ->withoutCategory()

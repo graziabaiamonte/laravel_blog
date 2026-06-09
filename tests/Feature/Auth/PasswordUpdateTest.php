@@ -2,6 +2,7 @@
 
 use App\Models\User;
 use Illuminate\Support\Facades\Hash;
+
 use function Pest\Laravel\actingAs;
 
 test('password can be updated', function () {
@@ -9,12 +10,12 @@ test('password can be updated', function () {
 
     $response =
         actingAs($user)
-        ->from('/profile')
-        ->put('/password', [
-            'current_password' => 'password',
-            'password' => 'new-password',
-            'password_confirmation' => 'new-password',
-        ]);
+            ->from('/profile')
+            ->put('/password', [
+                'current_password' => 'password',
+                'password' => 'new-password',
+                'password_confirmation' => 'new-password',
+            ]);
 
     $response
         ->assertSessionHasNoErrors()

@@ -39,7 +39,6 @@ class ConfirmablePasswordController extends Controller
 
         $request->session()->put('auth.password_confirmed_at', time());
 
-
         // redireziona l'utente alla pagina che stava cercando di visitare prima di essere intercettato dal form di conferma password. Se non c'è una pagina "intended" memorizzata, ricade sull'URL passato come fallback (qui dashboard).
         return redirect()->intended(route('admin.dashboard', absolute: false));
     }

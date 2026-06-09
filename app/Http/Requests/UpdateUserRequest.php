@@ -9,7 +9,6 @@ use Illuminate\Validation\Rule;
 
 /**
  * Validazione per la modifica di un utente qualsiasi da parte di un altro utente.
- *
  */
 class UpdateUserRequest extends FormRequest
 {

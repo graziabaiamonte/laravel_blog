@@ -11,13 +11,13 @@ enum Permission: string
     case ManageArticles = 'manage articles';
 
     /**
-     * Etichetta leggibile per la UI 
+     * Etichetta leggibile per la UI
      */
     public function label(): string
     {
         return match ($this) {
             self::PublishArticles => 'Pubblicare i propri articoli',
-            self::ManageArticles  => 'Gestire gli articoli di tutti',
+            self::ManageArticles => 'Gestire gli articoli di tutti',
         };
     }
 }

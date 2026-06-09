@@ -28,5 +28,4 @@ class PasswordController extends Controller
     }
 }
 
-
 // CAMBIO PW DI UTENTE LOGGATO

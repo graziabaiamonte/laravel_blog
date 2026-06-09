@@ -6,19 +6,17 @@ use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
 
 /**
- * VECCHIO SISTEMA — NON PIÙ USATO 
+ * VECCHIO SISTEMA — NON PIÙ USATO
  *
  * Prima dell'adozione di Spatie Media Library, questo trait raccoglieva in un
  * unico posto la logica di upload/cancellazione delle immagini, salvandole su
  * disco "public" e memorizzando il percorso nella colonna `image`.
-
  */
 trait HandlesImageUpload
 {
     /**
      * Salva un nuovo file immagine sul disco "public" dentro la cartella indicata
      * e ritorna il percorso salvato (es. "categories/abc123.jpg").
-     *
      */
     protected function storeImage(?UploadedFile $file, string $folder): ?string
     {
@@ -50,13 +48,13 @@ trait HandlesImageUpload
         }
 
         // l'utente ha chiesto di rimuovere l'immagine (checkbox "remove_image")
-        if ($request->boolean('remove_' . $field)) {
+        if ($request->boolean('remove_'.$field)) {
             $this->deleteImage($current);
 
             return null;
         }
 
-        // nessuna modifica 
+        // nessuna modifica
         return $current;
     }
 }

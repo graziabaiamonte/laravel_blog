@@ -2,28 +2,25 @@
 
 namespace App\Models;
 
+use App\Enums\ArticleStatus;
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Attributes\Scope;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\Relations\BelongsToMany;
-use Illuminate\Support\Str;
 // use Illuminate\Support\Facades\Storage;
-use Carbon\Carbon; // libreria per le date di laravel
-use App\Enums\ArticleStatus;
-use App\Models\Category;
-use Spatie\MediaLibrary\HasMedia;                 
-use Spatie\MediaLibrary\InteractsWithMedia;             
-// use Spatie\MediaLibrary\MediaCollections\Models\Media;   // il modello Media, usato come type-hint in registerMediaCollections()
+use Illuminate\Database\Eloquent\Relations\BelongsToMany; // libreria per le date di laravel
+use Illuminate\Support\Str;
+use Spatie\MediaLibrary\HasMedia;
+use Spatie\MediaLibrary\InteractsWithMedia;
 
+// use Spatie\MediaLibrary\MediaCollections\Models\Media;   // il modello Media, usato come type-hint in registerMediaCollections()
 
 // /**
 //  * @mixin IdeHelperArticle
 //  */
-/**
- */
 
 class Article extends Model implements HasMedia
 {
@@ -61,7 +58,6 @@ class Article extends Model implements HasMedia
             ->acceptsMimeTypes(config('media.images.mime_types'));
     }
 
-
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
@@ -97,11 +93,9 @@ class Article extends Model implements HasMedia
     //     );
     // }
 
-
-
     // ─── NUOVO sistema (Spatie Media Library) ─────────────────────────────────
     // nelle view $article->cover_url ritorna l'URL della cover
-    // o stringa vuota 
+    // o stringa vuota
     protected function coverUrl(): Attribute
     {
         return Attribute::make(
@@ -126,32 +120,28 @@ class Article extends Model implements HasMedia
     #[Scope]
     protected function search(Builder $query, ?string $term): Builder
     {
-        return $query->when($term, fn ($q, $term) =>
-            $q->where(fn ($q) =>
-                $q->where('title', 'like', "%{$term}%")
-                  ->orWhere('content', 'like', "%{$term}%")
-            )
+        return $query->when($term, fn ($q, $term) => $q->where(fn ($q) => $q->where('title', 'like', "%{$term}%")
+            ->orWhere('content', 'like', "%{$term}%")
+        )
         );
     }
 
     #[Scope]
     protected function inCategory(Builder $query, ?int $categoryId): Builder
     {
-        return $query->when($categoryId, fn ($q, $id) =>
-            $q->where('category_id', $id)
+        return $query->when($categoryId, fn ($q, $id) => $q->where('category_id', $id)
             // es. SELECT * FROM articles WHERE category_id = 5
         );
     }
-    // 
+    //
     // Builder $query: primo parametro obbligatorio per ogni scope. È l'istanza del query builder di Eloquent su cui si costruisce la query. Laravel lo passa automaticamente.
-    // 
+    //
     // when($categoryId, ...) alternativa a if: se il primo argomento ($categoryId) è truthy (non null, non 0, non stringa vuota), esegue la callback passata come secondo argomento.
 
     #[Scope]
     protected function withTag(Builder $query, ?int $tagId): Builder
     {
-        return $query->when($tagId, fn ($q, $id) =>
-            $q->whereHas('tags', fn ($q) => $q->where('tags.id', $id))
+        return $query->when($tagId, fn ($q, $id) => $q->whereHas('tags', fn ($q) => $q->where('tags.id', $id))
         );
     }
 

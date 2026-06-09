@@ -4,6 +4,7 @@ namespace App\Http\Requests;
 
 use App\Rules\ImageFile;
 use App\Rules\WithoutForbiddenWords;
+use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
 
 class UpdateArticleRequest extends FormRequest
@@ -19,22 +20,21 @@ class UpdateArticleRequest extends FormRequest
     /**
      * Get the validation rules that apply to the request.
      *
-     * @return array<string, \Illuminate\Contracts\Validation\ValidationRule|array<mixed>|string>
+     * @return array<string, ValidationRule|array<mixed>|string>
      */
     public function rules(): array
     {
         return [
-            'title'       => ['required', 'max:255', new WithoutForbiddenWords()],
-            'content'     => ['required', new WithoutForbiddenWords()],
+            'title' => ['required', 'max:255', new WithoutForbiddenWords],
+            'content' => ['required', new WithoutForbiddenWords],
             'category_id' => 'nullable|exists:categories,id',
-            'tags'        => 'nullable|array',
-            'tags.*'      => 'exists:tags,id',
-            'image'        => ['nullable', 'file', new ImageFile()],
+            'tags' => 'nullable|array',
+            'tags.*' => 'exists:tags,id',
+            'image' => ['nullable', 'file', new ImageFile],
             'remove_image' => ['nullable', 'boolean'],
         ];
     }
 }
-
 
 // public function rules(): array {
 //     $rules = [

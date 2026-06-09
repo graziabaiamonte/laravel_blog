@@ -12,7 +12,7 @@ return new class extends Migration
             $table->id();
 
             // genera model_type e model_id
-            $table->morphs('model'); 
+            $table->morphs('model');
 
             $table->uuid()->nullable()->unique();
             $table->string('collection_name');

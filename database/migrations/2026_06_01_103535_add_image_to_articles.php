@@ -12,7 +12,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('articles', function (Blueprint $table) {
-            
+
             // Salviamo solo il percorso del file (es. "articles/abc123.jpg"),
             // non il file vero e proprio
             $table->string('image')->nullable()->after('content');

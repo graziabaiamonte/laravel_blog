@@ -23,8 +23,8 @@ class StoreCategoryRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'name'  => 'required|string|max:255',
-            'image' => ['nullable', 'file', new ImageFile()],
+            'name' => 'required|string|max:255',
+            'image' => ['nullable', 'file', new ImageFile],
         ];
     }
 }

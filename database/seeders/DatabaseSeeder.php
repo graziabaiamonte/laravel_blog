@@ -14,13 +14,13 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-      // ogni seeder dipende da quelli sopra di lui
-      $this->call([
-        UserSeeder::class,
-        RolesPermissionsSeeder::class,
-        CategorySeeder::class,
-        TagSeeder::class,
-        ArticleSeeder::class,
-      ]);
+        // ogni seeder dipende da quelli sopra di lui
+        $this->call([
+            UserSeeder::class,
+            RolesPermissionsSeeder::class,
+            CategorySeeder::class,
+            TagSeeder::class,
+            ArticleSeeder::class,
+        ]);
     }
 }
