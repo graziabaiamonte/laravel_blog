@@ -3,9 +3,9 @@
 @section('title', 'Registrati')
 
 @section('content')
-    <div class="auth-page">
+    <div class="mx-auto my-12 max-w-md px-4">
         <x-card>
-            <h1>Crea un account</h1>
+            <h1 class="mb-6 text-center text-subheading font-semibold text-ink">Crea un account</h1>
 
             <form method="POST" action="{{ route('register') }}">
                 @csrf
@@ -43,8 +43,8 @@
                     autocomplete="new-password"
                 />
 
-                <div class="form-actions">
-                    <a class="text-link" href="{{ route('login') }}">
+                <div class="mt-6 flex items-center justify-between gap-3">
+                    <a class="text-sm text-muted underline hover:text-ink" href="{{ route('login') }}">
                         Hai già un account?
                     </a>
 

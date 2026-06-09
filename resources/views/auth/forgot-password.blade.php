@@ -3,11 +3,11 @@
 @section('title', 'Password dimenticata')
 
 @section('content')
-    <div class="auth-page">
+    <div class="mx-auto my-12 max-w-md px-4">
         <x-card>
-            <h1>Password dimenticata?</h1>
+            <h1 class="mb-6 text-center text-subheading font-semibold text-ink">Password dimenticata?</h1>
 
-            <p class="intro-text">
+            <p class="mb-5 text-sm leading-relaxed text-muted">
                 Inserisci la tua email e ti invieremo un link per reimpostare la password.
             </p>
 
@@ -26,7 +26,7 @@
                     autofocus
                 />
 
-                <div class="form-actions" style="justify-content: flex-end;">
+                <div class="mt-6 flex justify-end gap-3">
                     <x-button variant="primary">Invia link di reset</x-button>
                 </div>
             </form>

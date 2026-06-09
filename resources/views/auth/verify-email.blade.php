@@ -3,11 +3,11 @@
 @section('title', 'Verifica email')
 
 @section('content')
-    <div class="auth-page">
+    <div class="mx-auto my-12 max-w-md px-4">
         <x-card>
-            <h1>Verifica la tua email</h1>
+            <h1 class="mb-6 text-center text-subheading font-semibold text-ink">Verifica la tua email</h1>
 
-            <p class="intro-text">
+            <p class="mb-5 text-sm leading-relaxed text-muted">
                 Grazie per esserti registrato! Prima di iniziare, conferma la tua email
                 cliccando sul link che ti abbiamo appena inviato. Se non hai ricevuto la mail,
                 possiamo rimandartene una.
@@ -19,7 +19,7 @@
                 </x-alert>
             @endif
 
-            <div class="form-actions">
+            <div class="mt-6 flex items-center justify-between gap-3">
                 <form method="POST" action="{{ route('verification.send') }}">
                     @csrf
                     <x-button variant="primary">Reinvia email di verifica</x-button>

@@ -4,8 +4,8 @@
 
 @section('content')
 
-    <div class="page-header">
-        <h1 class="header-title">Gestione Categorie</h1>
+    <div class="mb-6 flex flex-wrap items-center justify-between gap-4 border-b border-line p-6">
+        <h1 class="text-heading font-bold text-ink">Gestione Categorie</h1>
         <x-button variant="primary" :href="route('admin.categories.create')">+ Nuova Categoria</x-button>
     </div>
 
@@ -14,20 +14,20 @@
     @endif
 
     @if ($categories->isEmpty())
-        <div class="empty-state">
+        <div class="rounded-card border border-dashed border-line bg-white px-6 py-12 text-center text-muted">
             <p>Nessuna categoria presente.</p>
         </div>
     @else
         @foreach ($categories as $category)
             <x-card>
                 @if ($category->image_url)
-                    <img src="{{ $category->image_url }}" alt="Immagine di {{ $category->name }}" style="max-width: 120px; height: auto;">
+                    <img src="{{ $category->image_url }}" alt="Immagine di {{ $category->name }}" class="h-auto max-w-30">
                 @endif
-                <h2>{{ $category->name }}</h2>
-                <div class="card-meta">
+                <h2 class="mb-2 text-subheading font-semibold text-ink">{{ $category->name }}</h2>
+                <div class="mb-3 text-meta text-muted">
                     Articoli: {{ $category->articles()->count() }}
                 </div>
-                <div class="card-actions">
+                <div class="mt-4 flex flex-wrap gap-2 border-t border-line pt-4">
                     <x-button variant="read" :href="route('admin.categories.show', $category->id)">Dettagli</x-button>
                     <x-button variant="edit" :href="route('admin.categories.edit', $category->id)">Modifica</x-button>
                     <x-delete-form
@@ -38,6 +38,6 @@
         @endforeach
     @endif
 
-    <p style="margin-top:18px"><a href="{{ route('articles.index') }}" class="btn-back">← Torna agli articoli</a></p>
+    <p class="mt-5"><a href="{{ route('articles.index') }}" class="text-sm font-medium text-muted no-underline transition hover:text-ink">← Torna agli articoli</a></p>
 
 @endsection

@@ -3,11 +3,11 @@
 @section('title', 'Profilo')
 
 @section('content')
-    <div class="page-header">
-        <h1 class="header-title">Il mio profilo</h1>
+    <div class="mb-6 border-b border-line p-6">
+        <h1 class="text-heading font-bold text-ink">Il mio profilo</h1>
     </div>
 
-    <div style="max-width: 640px; margin: 0 auto;">
+    <div class="mx-auto max-w-160">
         <x-card>
             @include('profile.partials.update-profile-information-form')
         </x-card>

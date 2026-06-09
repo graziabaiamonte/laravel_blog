@@ -8,14 +8,15 @@
      'permission:publish articles', quindi è blindata anche lato server. --}}
 <form method="POST"
       action="{{ route('admin.articles.status', $article->id) }}"
-      class="status-form"
+      class="mt-3 flex items-center gap-2"
       data-article-id="{{ $article->id }}">
     @csrf
     {{-- La rotta è un PATCH: in HTML i form fanno solo GET/POST, quindi
          @method('PATCH') aggiunge il campo nascosto che Laravel interpreta. --}}
     @method('PATCH')
 
-    <select name="status" aria-label="Stato dell'articolo">
+    <select name="status" aria-label="Stato dell'articolo"
+            class="rounded-md border border-line bg-white px-2.5 py-1.5 text-sm">
         {{-- Una <option> per ogni caso dell'enum; @selected preseleziona
              quella corrispondente allo stato attuale dell'articolo. --}}
         @foreach (\App\Enums\ArticleStatus::cases() as $statusOption)

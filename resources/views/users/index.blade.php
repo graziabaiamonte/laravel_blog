@@ -4,8 +4,8 @@
 
 @section('content')
 
-    <div class="page-header">
-        <h1 class="header-title">Gestione Utenti</h1>
+    <div class="mb-6 flex flex-wrap items-center justify-between gap-4 border-b border-line p-6">
+        <h1 class="text-heading font-bold text-ink">Gestione Utenti</h1>
     </div>
 
     {{-- ⚠️ Pagina didattica: qui qualsiasi utente loggato può gestire gli altri.
@@ -16,18 +16,18 @@
     @endif
 
     @if ($users->isEmpty())
-        <div class="empty-state">
+        <div class="rounded-card border border-dashed border-line bg-white px-6 py-12 text-center text-muted">
             <p>Nessun utente presente.</p>
         </div>
     @else
         @foreach ($users as $user)
             <x-card>
-                <h2>{{ $user->name }}</h2>
-                <div class="card-meta">
+                <h2 class="mb-2 text-subheading font-semibold text-ink">{{ $user->name }}</h2>
+                <div class="mb-3 text-meta text-muted">
                     Email: {{ $user->email }}
                     &middot; Articoli: {{ $user->articles()->count() }}
                 </div>
-                <div class="card-actions">
+                <div class="mt-4 flex flex-wrap gap-2 border-t border-line pt-4">
                     <x-button variant="edit" :href="route('admin.users.edit', $user->id)">Modifica</x-button>
 
                     {{-- Non mostriamo il pulsante "Elimina" sul nostro stesso account:
@@ -42,6 +42,6 @@
         @endforeach
     @endif
 
-    <p style="margin-top:18px"><a href="{{ route('admin.dashboard') }}" class="btn-back">← Torna alla dashboard</a></p>
+    <p class="mt-5"><a href="{{ route('admin.dashboard') }}" class="text-sm font-medium text-muted no-underline transition hover:text-ink">← Torna alla dashboard</a></p>
 
 @endsection

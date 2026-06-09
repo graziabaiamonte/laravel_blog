@@ -4,8 +4,14 @@
 
 @section('content')
 
-    <div class="page-header">
-        <h1>Modifica utente: {{ $user->name }}</h1>
+    @php
+        $group = 'mb-4 flex flex-col gap-1.5';
+        $label = 'text-sm font-medium text-ink';
+        $control = 'w-full rounded-md border border-line bg-white px-3 py-2 text-base focus:border-primary focus:outline-none focus:ring focus:ring-primary/10 disabled:cursor-not-allowed disabled:bg-canvas disabled:text-muted';
+    @endphp
+
+    <div class="mb-6 border-b border-line p-6">
+        <h1 class="text-heading font-bold text-ink">Modifica utente: {{ $user->name }}</h1>
     </div>
 
     <x-form-errors />
@@ -17,16 +23,16 @@
         @csrf
         @method('PUT')
 
-        <div class="form-group">
-            <label for="name">Nome</label>
+        <div class="{{ $group }}">
+            <label for="name" class="{{ $label }}">Nome</label>
             {{-- old('name', $user->name): se la validazione fallisce ripropone
                  il valore appena digitato, altrimenti il valore attuale dell'utente. --}}
-            <input type="text" id="name" name="name" value="{{ old('name', $user->name) }}" required>
+            <input type="text" id="name" name="name" value="{{ old('name', $user->name) }}" required class="{{ $control }}">
         </div>
 
-        <div class="form-group">
-            <label for="email">Email</label>
-            <input type="email" id="email" name="email" value="{{ old('email', $user->email) }}" required>
+        <div class="{{ $group }}">
+            <label for="email" class="{{ $label }}">Email</label>
+            <input type="email" id="email" name="email" value="{{ old('email', $user->email) }}" required class="{{ $control }}">
         </div>
 
         {{-- $isSelf: l'admin sta modificando il proprio account?
@@ -37,11 +43,11 @@
             $currentRole = old('role', $user->getRoleNames()->first());
         @endphp
 
-        <div class="form-group">
-            <label for="role">Ruolo</label>
+        <div class="{{ $group }}">
+            <label for="role" class="{{ $label }}">Ruolo</label>
             {{-- @disabled($isSelf): se modifichi te stesso il select è bloccato e
                  NON viene inviato, così non puoi cambiarti il ruolo da solo. --}}
-            <select id="role" name="role" @disabled($isSelf) @if (! $isSelf) required @endif>
+            <select id="role" name="role" class="{{ $control }}" @disabled($isSelf) @if (! $isSelf) required @endif>
                 @foreach ($roles as $role)
                     {{-- @selected(...) mette "selected" sull'opzione che corrisponde
                          al ruolo attuale dell'utente. --}}
@@ -51,12 +57,14 @@
                 @endforeach
             </select>
             @if ($isSelf)
-                <small style="color: var(--color-muted)">Non puoi modificare il tuo stesso ruolo.</small>
+                <small class="text-muted">Non puoi modificare il tuo stesso ruolo.</small>
             @endif
         </div>
 
-        <x-button variant="edit">Aggiorna utente</x-button>
-        <x-button variant="cancel" :href="route('admin.users.index')">Annulla</x-button>
+        <div class="flex gap-2">
+            <x-button variant="edit">Aggiorna utente</x-button>
+            <x-button variant="cancel" :href="route('admin.users.index')">Annulla</x-button>
+        </div>
     </form>
 
 @endsection

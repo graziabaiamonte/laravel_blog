@@ -11,16 +11,20 @@
     $fieldErrors = $errors->get($name);
 @endphp
 
-<div class="form-group">
+@php
+    $control = 'w-full rounded-md border border-line bg-white px-3 py-2 text-base focus:border-primary focus:outline-none focus:ring focus:ring-primary/10';
+@endphp
+
+<div class="mb-4 flex flex-col gap-1.5">
     @if ($label)
-        <label for="{{ $name }}">{{ $label }}</label>
+        <label for="{{ $name }}" class="text-sm font-medium text-ink">{{ $label }}</label>
     @endif
 
     @if ($type === 'textarea')
         <textarea
             id="{{ $name }}"
             name="{{ $name }}"
-            {{ $attributes }}
+            {{ $attributes->merge(['class' => $control . ' min-h-[150px] resize-y']) }}
         >{{ old($name, $value) }}</textarea>
     @else
         <input
@@ -28,13 +32,13 @@
             name="{{ $name }}"
             type="{{ $type }}"
             value="{{ old($name, $value) }}"
-            {{ $attributes }}
+            {{ $attributes->merge(['class' => $control]) }}
         >
     @endif
 
     @if ($fieldErrors)
         @foreach ($fieldErrors as $message)
-            <small class="field-error">{{ $message }}</small>
+            <small class="mt-0.5 text-xs text-danger">{{ $message }}</small>
         @endforeach
     @endif
 </div>

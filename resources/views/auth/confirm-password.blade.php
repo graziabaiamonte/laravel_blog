@@ -3,11 +3,11 @@
 @section('title', 'Conferma password')
 
 @section('content')
-    <div class="auth-page">
+    <div class="mx-auto my-12 max-w-md px-4">
         <x-card>
-            <h1>Conferma password</h1>
+            <h1 class="mb-6 text-center text-subheading font-semibold text-ink">Conferma password</h1>
 
-            <p class="intro-text">
+            <p class="mb-5 text-sm leading-relaxed text-muted">
                 Questa è un'area riservata. Conferma la tua password per continuare.
             </p>
 
@@ -22,7 +22,7 @@
                     autocomplete="current-password"
                 />
 
-                <div class="form-actions" style="justify-content: flex-end;">
+                <div class="mt-6 flex justify-end gap-3">
                     <x-button variant="primary">Conferma</x-button>
                 </div>
             </form>

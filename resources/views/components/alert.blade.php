@@ -1,5 +1,13 @@
 @props(['type' => 'success'])
 
-<div {{ $attributes->merge(['class' => 'alert alert-' . $type]) }}>
+@php
+    $variants = [
+        'success' => 'bg-green-50 text-green-800 border-green-200',
+        'error'   => 'bg-red-50 text-red-800 border-red-200',
+    ];
+    $classes = 'mb-4 rounded-card border px-4 py-3 text-sm ' . ($variants[$type] ?? $variants['success']);
+@endphp
+
+<div {{ $attributes->merge(['class' => $classes]) }}>
     {{ $slot }}
 </div>

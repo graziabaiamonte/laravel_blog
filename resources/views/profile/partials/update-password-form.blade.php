@@ -1,7 +1,7 @@
 <section>
-    <div class="section-header">
-        <h2>Aggiorna password</h2>
-        <p>Assicurati di usare una password lunga e casuale per maggiore sicurezza.</p>
+    <div class="mb-6">
+        <h2 class="mb-1 text-section font-semibold text-ink">Aggiorna password</h2>
+        <p class="text-meta text-muted">Assicurati di usare una password lunga e casuale per maggiore sicurezza.</p>
     </div>
 
     <form method="post" action="{{ route('password.update') }}">
@@ -32,7 +32,7 @@
             errorBag="updatePassword"
         />
 
-        <div class="form-actions" style="justify-content: flex-start;">
+        <div class="mt-6 flex items-center gap-3">
             <x-button variant="primary">Salva</x-button>
 
             @if (session('status') === 'password-updated')
@@ -41,7 +41,7 @@
                     x-show="show"
                     x-transition
                     x-init="setTimeout(() => show = false, 2000)"
-                    class="form-status"
+                    class="text-sm text-success"
                 >Salvato.</p>
             @endif
         </div>

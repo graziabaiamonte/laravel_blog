@@ -4,44 +4,44 @@
 
 @section('content')
 
-    <div class="navigation">
-        <a href="{{ route('admin.categories.index') }}" class="btn-back">← Torna alle categorie</a>
+    <div class="mb-4">
+        <a href="{{ route('admin.categories.index') }}" class="inline-block rounded-md px-2 py-1 text-sm font-medium text-muted no-underline transition hover:text-ink">← Torna alle categorie</a>
     </div>
 
-    <h1 class="article-title">{{ $category->name }}</h1>
+    <h1 class="mb-2 text-article-title font-bold text-ink">{{ $category->name }}</h1>
 
     @if ($category->image_url)
-        <div class="current-image">
-            <img src="{{ $category->image_url }}" alt="Immagine di {{ $category->name }}" style="max-width: 300px; height: auto;">
+        <div class="my-4">
+            <img src="{{ $category->image_url }}" alt="Immagine di {{ $category->name }}" class="h-auto max-w-75">
         </div>
     @endif
 
-    <div class="article-meta">
+    <div class="mb-6 text-meta text-muted">
         Articoli in questa categoria: {{ $category->articles->count() }}
     </div>
 
     @if ($category->articles->isEmpty())
-        <div class="empty-state">
+        <div class="rounded-card border border-dashed border-line bg-white px-6 py-12 text-center text-muted">
             <p>Nessun articolo in questa categoria.</p>
         </div>
     @else
         @foreach ($category->articles as $article)
             <x-card>
-                <h2>{{ $article->title }}</h2>
-                <div class="card-meta">
+                <h2 class="mb-2 text-subheading font-semibold text-ink">{{ $article->title }}</h2>
+                <div class="mb-3 text-meta text-muted">
                     Pubblicato il: {{ $article->created_at->format('d/m/Y H:i') }}
                 </div>
                 <div>
                     {{ \Illuminate\Support\Str::limit($article->content, 150) }}
                 </div>
-                <div class="card-actions">
+                <div class="mt-4 flex flex-wrap gap-2 border-t border-line pt-4">
                     <x-button variant="read" :href="route('articles.show', $article->id)">Leggi tutto</x-button>
                 </div>
             </x-card>
         @endforeach
     @endif
 
-    <div class="footer-actions">
+    <div class="mt-6 flex gap-2 border-t border-line pt-6">
         <x-button variant="edit" :href="route('admin.categories.edit', $category->id)">Modifica categoria</x-button>
         <x-delete-form
             :action="route('admin.categories.destroy', $category->id)"

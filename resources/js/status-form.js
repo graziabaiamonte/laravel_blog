@@ -5,7 +5,12 @@ document.addEventListener("DOMContentLoaded", () => {
     // Laravel lo pretende su ogni richiesta POST/PUT/PATCH/DELETE per sicurezza.
     const csrfToken = document.querySelector('meta[name="csrf-token"]').content;
 
-    document.querySelectorAll(".status-form").forEach((form) => {
+    const STATUS_BADGE_BASE =
+        "inline-block rounded-full px-2.5 py-0.5 text-[0.7rem] font-semibold uppercase tracking-wide";
+
+    // Aggancio i form tramite l'attributo data-article-id (hook stabile,
+    // indipendente dalle classi di stile che ora sono utility Tailwind).
+    document.querySelectorAll("form[data-article-id]").forEach((form) => {
         form.addEventListener("submit", async (event) => {
             event.preventDefault();
 
@@ -37,10 +42,11 @@ document.addEventListener("DOMContentLoaded", () => {
                 if (badge) {
                     badge.textContent = dati.label;
                     badge.className =
-                        "status-badge " +
+                        STATUS_BADGE_BASE +
+                        " " +
                         (dati.isPublished
-                            ? "status-badge--published"
-                            : "status-badge--draft");
+                            ? "bg-green-100 text-green-800"
+                            : "bg-yellow-100 text-yellow-800");
                 }
 
                 // console.log(dati.message);

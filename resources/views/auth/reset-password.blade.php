@@ -3,9 +3,9 @@
 @section('title', 'Reimposta password')
 
 @section('content')
-    <div class="auth-page">
+    <div class="mx-auto my-12 max-w-md px-4">
         <x-card>
-            <h1>Reimposta password</h1>
+            <h1 class="mb-6 text-center text-subheading font-semibold text-ink">Reimposta password</h1>
 
             <form method="POST" action="{{ route('password.store') }}">
                 @csrf
@@ -38,7 +38,7 @@
                     autocomplete="new-password"
                 />
 
-                <div class="form-actions" style="justify-content: flex-end;">
+                <div class="mt-6 flex justify-end gap-3">
                     <x-button variant="primary">Reimposta password</x-button>
                 </div>
             </form>

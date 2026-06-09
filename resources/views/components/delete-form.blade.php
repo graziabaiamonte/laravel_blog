@@ -4,7 +4,7 @@
     'label' => 'Elimina',
 ])
 
-<form action="{{ $action }}" method="POST" onsubmit="return confirm('{{ $confirm }}');" style="display:inline;">
+<form action="{{ $action }}" method="POST" onsubmit="return confirm('{{ $confirm }}');" class="inline">
     @csrf
     @method('DELETE')
     <x-button variant="danger">{{ $label }}</x-button>

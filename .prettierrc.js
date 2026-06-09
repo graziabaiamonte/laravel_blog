@@ -8,4 +8,5 @@ export default {
     jsxSingleQuote: true,
     // tabWidth: 4, // defined in .editorconfig
     trailingComma: "all",
+    plugins: ["prettier-plugin-tailwindcss"],
 };

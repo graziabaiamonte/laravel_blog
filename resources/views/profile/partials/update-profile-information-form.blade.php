@@ -1,7 +1,7 @@
 <section>
-    <div class="section-header">
-        <h2>Informazioni profilo</h2>
-        <p>Aggiorna le informazioni del tuo account e l'indirizzo email.</p>
+    <div class="mb-6">
+        <h2 class="mb-1 text-section font-semibold text-ink">Informazioni profilo</h2>
+        <p class="text-meta text-muted">Aggiorna le informazioni del tuo account e l'indirizzo email.</p>
     </div>
 
     <form id="send-verification" method="post" action="{{ route('verification.send') }}">
@@ -32,9 +32,9 @@
         />
 
         @if ($user instanceof \Illuminate\Contracts\Auth\MustVerifyEmail && ! $user->hasVerifiedEmail())
-            <p class="muted" style="margin-bottom: 16px;">
+            <p class="mb-4 text-meta text-muted">
                 La tua email non è verificata.
-                <button form="send-verification" class="text-link" style="background:none; border:none; cursor:pointer; padding:0;">
+                <button form="send-verification" class="cursor-pointer border-0 bg-transparent p-0 text-sm text-muted underline">
                     Clicca qui per reinviare la mail di verifica.
                 </button>
             </p>
@@ -46,7 +46,7 @@
             @endif
         @endif
 
-        <div class="form-actions" style="justify-content: flex-start;">
+        <div class="mt-6 flex items-center gap-3">
             <x-button variant="primary">Salva</x-button>
 
             @if (session('status') === 'profile-updated')
@@ -55,7 +55,7 @@
                     x-show="show"
                     x-transition
                     x-init="setTimeout(() => show = false, 2000)"
-                    class="form-status"
+                    class="text-sm text-success"
                 >Salvato.</p>
             @endif
         </div>

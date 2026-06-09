@@ -1,6 +1,6 @@
 @if ($errors->any())
     <x-alert type="error">
-        <ul>
+        <ul class="list-disc pl-5">
             @foreach ($errors->all() as $error)
                 <li>{{ $error }}</li>
             @endforeach

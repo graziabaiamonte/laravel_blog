@@ -3,9 +3,9 @@
 @section('title', 'Accedi')
 
 @section('content')
-    <div class="auth-page">
+    <div class="mx-auto my-12 max-w-md px-4">
         <x-card>
-            <h1>Accedi</h1>
+            <h1 class="mb-6 text-center text-subheading font-semibold text-ink">Accedi</h1>
 
             @if (session('status'))
                 <x-alert type="success">{{ session('status') }}</x-alert>
@@ -31,16 +31,16 @@
                     autocomplete="current-password"
                 />
 
-                <div class="form-group">
-                    <label style="font-weight: normal; flex-direction: row; align-items: center; gap: 6px; display: inline-flex;">
-                        <input type="checkbox" name="remember">
+                <div class="mb-4">
+                    <label class="inline-flex cursor-pointer items-center gap-1.5 font-normal text-ink">
+                        <input type="checkbox" name="remember" class="h-4 w-4 rounded text-primary focus:ring-primary">
                         <span>Ricordami</span>
                     </label>
                 </div>
 
-                <div class="form-actions">
+                <div class="mt-6 flex items-center justify-between gap-3">
                     @if (Route::has('password.request'))
-                        <a class="text-link" href="{{ route('password.request') }}">
+                        <a class="text-sm text-muted underline hover:text-ink" href="{{ route('password.request') }}">
                             Password dimenticata?
                         </a>
                     @endif

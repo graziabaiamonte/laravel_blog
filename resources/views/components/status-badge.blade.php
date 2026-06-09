@@ -5,9 +5,10 @@
 
 {{-- Classe diversa a seconda dello stato: verde = pubblicato, giallo = bozza --}}
 @php
+    $base = 'inline-block rounded-full px-2.5 py-0.5 text-[0.7rem] font-semibold uppercase tracking-wide';
     $class = $status === \App\Enums\ArticleStatus::Published
-        ? 'status-badge status-badge--published'
-        : 'status-badge status-badge--draft';
+        ? $base . ' bg-green-100 text-green-800'
+        : $base . ' bg-yellow-100 text-yellow-800';
 @endphp
 
 {{-- data-status-badge="<id>" permette al JavaScript di trovare QUESTO badge

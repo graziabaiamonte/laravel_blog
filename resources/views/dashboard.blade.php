@@ -3,8 +3,8 @@
 @section('title', 'Dashboard')
 
 @section('content')
-    <div class="page-header">
-        <h1 class="header-title">Dashboard</h1>
+    <div class="mb-6 flex flex-wrap items-center justify-between gap-4 border-b border-line p-6">
+        <h1 class="text-heading font-bold text-ink">Dashboard</h1>
         <x-button variant="primary" :href="route('admin.articles.create')">+ Nuovo Articolo</x-button>
     </div>
 
@@ -16,7 +16,7 @@
     <x-card>
         <p>Sei loggato come <strong>{{ Auth::user()->name }}</strong>.</p>
 
-        <div class="card-actions">
+        <div class="mt-4 flex flex-wrap gap-2 border-t border-line pt-4">
             <x-button variant="primary" :href="route('home')">Vai al blog</x-button>
             <x-button variant="cancel" :href="route('admin.profile.edit')">Modifica profilo</x-button>
             <x-button variant="cancel" :href="route('admin.users.index')">Gestione utenti</x-button>
@@ -25,31 +25,31 @@
 
     {{-- Griglia a due colonne: si impila in una sola colonna su schermi piccoli
          (grid-cols-1) e diventa a due colonne da medi in su (md:grid-cols-2). --}}
-    <div class="grid grid-cols-1 md:grid-cols-2 gap-6" style="margin-top:24px">
+    <div class="mt-6 grid grid-cols-1 gap-6 md:grid-cols-2">
 
         {{-- COLONNA 1: gli articoli dell'utente loggato.
              $articles arriva da ArticleController@index, filtrati con ownedBy().
              Essendo tutti suoi, mostriamo sempre Modifica/Elimina. --}}
         <div>
-            <h2>I miei articoli</h2>
+            <h2 class="mb-4 text-subheading font-semibold text-ink">I miei articoli</h2>
 
             @if ($articles->isEmpty())
-                <div class="empty-state">
+                <div class="rounded-card border border-dashed border-line bg-white px-6 py-12 text-center text-muted">
                     <p>Non hai ancora scritto nessun articolo.</p>
                 </div>
             @else
                 @foreach ($articles as $article)
                     <x-card>
-                        <h2>{{ $article->title }}</h2>
+                        <h2 class="mb-2 text-subheading font-semibold text-ink">{{ $article->title }}</h2>
                         {{-- Badge di stato: l'autore vede subito se la sua roba
                              è ancora in bozza o è stata pubblicata dall'admin. --}}
                         <x-status-badge :status="$article->status" :id="$article->id" />
-                        <div class="card-meta">
+                        <div class="mb-3 text-meta text-muted">
                             Creato il: {{ $article->created_at }}
                             &middot; Categoria: {{ $article->category?->name ?? 'nessuna' }}
                         </div>
                         @if ($article->tags->isNotEmpty())
-                            <div class="tag-list">
+                            <div class="my-2 flex flex-wrap gap-1.5">
                                 @foreach ($article->tags as $tag)
                                     <x-tag-badge :tag="$tag" />
                                 @endforeach
@@ -63,7 +63,7 @@
                         @can('publish articles')
                             <x-status-form :article="$article" />
                         @endcan
-                        <div class="card-actions">
+                        <div class="mt-4 flex flex-wrap gap-2 border-t border-line pt-4">
                             <x-button variant="read" :href="route('articles.show', $article->id)">Leggi tutto</x-button>
                             <x-button variant="edit" :href="route('admin.articles.edit', $article->id)">Modifica</x-button>
                             <x-delete-form
@@ -80,20 +80,20 @@
              permesso (l'admin). Per un author l'intera colonna sparisce. --}}
         @can('manage articles')
             <div>
-                <h2>Articoli degli altri utenti</h2>
+                <h2 class="mb-4 text-subheading font-semibold text-ink">Articoli degli altri utenti</h2>
 
                 @if (empty($othersArticles) || $othersArticles->isEmpty())
-                    <div class="empty-state">
+                    <div class="rounded-card border border-dashed border-line bg-white px-6 py-12 text-center text-muted">
                         <p>Non ci sono articoli di altri utenti.</p>
                     </div>
                 @else
                     @foreach ($othersArticles as $article)
                         <x-card>
-                            <h2>{{ $article->title }}</h2>
+                            <h2 class="mb-2 text-subheading font-semibold text-ink">{{ $article->title }}</h2>
                             {{-- Badge di stato anche qui: l'admin vede a colpo
                                  d'occhio quali bozze deve ancora pubblicare. --}}
                             <x-status-badge :status="$article->status" :id="$article->id" />
-                            <div class="card-meta">
+                            <div class="mb-3 text-meta text-muted">
                                 {{-- $article->user?->name: il ? evita errori se l'autore
                                      fosse mancante (es. utente eliminato). --}}
                                 Autore: <strong>{{ $article->user?->name ?? 'sconosciuto' }}</strong>
@@ -101,7 +101,7 @@
                                 &middot; Categoria: {{ $article->category?->name ?? 'nessuna' }}
                             </div>
                             @if ($article->tags->isNotEmpty())
-                                <div class="tag-list">
+                                <div class="my-2 flex flex-wrap gap-1.5">
                                     @foreach ($article->tags as $tag)
                                         <x-tag-badge :tag="$tag" />
                                     @endforeach
@@ -118,7 +118,7 @@
                             {{-- Stessi pulsanti: per l'admin le rotte edit/update/destroy
                                  funzionano anche su articoli altrui grazie al middleware
                                  owns.article (che lascia passare chi ha 'manage articles'). --}}
-                            <div class="card-actions">
+                            <div class="mt-4 flex flex-wrap gap-2 border-t border-line pt-4">
                                 <x-button variant="read" :href="route('articles.show', $article->id)">Leggi tutto</x-button>
                                 <x-button variant="edit" :href="route('admin.articles.edit', $article->id)">Modifica</x-button>
                                 <x-delete-form
