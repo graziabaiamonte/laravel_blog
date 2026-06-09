@@ -4,6 +4,7 @@ use App\Enums\Permission;
 use App\Enums\Role;
 use App\Http\Controllers\ArticleController;
 use App\Http\Controllers\CategoryController;
+use App\Http\Controllers\CommentController;
 use App\Http\Controllers\Frontend\ArticleController as FrontendArticleController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\TagController;
@@ -60,9 +61,24 @@ Route::middleware('auth')->prefix('admin')->as('admin.')->group(function () {
     Route::resource('users', UserController::class)
         ->middleware('role:'.Role::Admin->value);
 
+    // MODERAZIONE commenti: solo il proprietario dell'articolo (o l'admin).
+    // 'owns.comment' risale dal commento al suo articolo e verifica la proprietà.
+    Route::patch('comments/{comment}/approve', [CommentController::class, 'approve'])
+        ->middleware('owns.comment')
+        ->name('comments.approve');
+
+    Route::delete('comments/{comment}', [CommentController::class, 'destroy'])
+        ->middleware('owns.comment')
+        ->name('comments.destroy');
+
 });
 
 // Parte PUBBLICA degli articoli
 Route::resource('articles', FrontendArticleController::class)->only(['index', 'show']);
+
+// SCRITTURA di un commento: qualsiasi utente loggato, anche su articoli non suoi.
+Route::post('articles/{article}/comments', [CommentController::class, 'store'])
+    ->middleware('auth')
+    ->name('comments.store');
 
 require __DIR__.'/auth.php';

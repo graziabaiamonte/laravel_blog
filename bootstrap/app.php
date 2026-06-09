@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Middleware\UserOwnsArticle;
+use App\Http\Middleware\UserOwnsComment;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
@@ -19,6 +20,7 @@ return Application::configure(basePath: dirname(__DIR__))
         // nelle rotte scrivendo semplicemente 'owns.article'.
         $middleware->alias([
             'owns.article' => UserOwnsArticle::class,
+            'owns.comment' => UserOwnsComment::class,
 
             // Alias dei middleware di spatie/laravel-permission
             'role' => RoleMiddleware::class,

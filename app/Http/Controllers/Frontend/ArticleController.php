@@ -46,8 +46,22 @@ class ArticleController extends Controller
             abort_unless($puoVederla, 404);
         }
 
-        $article->load('category', 'tags');
+        // Carico anche i commenti col loro autore, dal più recente.
+        $article->load([
+            'category',
+            'tags',
+            'comments' => fn ($q) => $q->with('user')->latest(),
+        ]);
 
-        return view('articles.show', ['article' => ArticleResource::make($article)]);
+        // Può moderare i commenti: il proprietario dell'articolo oppure l'admin.
+        $user = request()->user();
+        $canModerate = $user
+            && ($user->id === $article->user_id
+                || $user->can(Permission::ManageArticles->value));
+
+        return view('articles.show', [
+            'article' => ArticleResource::make($article),
+            'canModerate' => $canModerate,
+        ]);
     }
 }

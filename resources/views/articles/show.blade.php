@@ -53,4 +53,62 @@
         @endif
     @endauth
 
+    {{-- ============================ COMMENTI ============================ --}}
+    <section id="commenti" class="mt-10 border-t border-line pt-8">
+        <h2 class="mb-6 text-subheading font-semibold text-ink">Commenti</h2>
+
+        {{-- Il form si mostra SOLO se l'articolo è pubblicato: sulle bozze
+             (visibili solo a proprietario/admin) non si può commentare, quindi
+             nemmeno mostriamo il form. --}}
+        @if ($article->isPublished())
+            {{-- Form: solo per utenti loggati --}}
+            @auth
+                <form method="POST" action="{{ route('comments.store', $article->id) }}" class="mb-8">
+                    @csrf
+                    <div class="mb-3 flex flex-col gap-1.5">
+                        <label for="comment-body" class="text-sm font-medium text-ink">Lascia un commento</label>
+                        <textarea
+                            id="comment-body"
+                            name="body"
+                            rows="3"
+                            required
+                            placeholder="Scrivi qui il tuo commento..."
+                            class="w-full resize-y rounded-md border bg-white px-3 py-2 text-base focus:border-primary focus:outline-none focus:ring focus:ring-primary/10 @error('body') border-danger @else border-line @enderror">{{ old('body') }}</textarea>
+                        @error('body')
+                            <small class="text-xs text-danger">{{ $message }}</small>
+                        @enderror
+                    </div>
+                    <x-button variant="primary">Invia commento</x-button>
+                </form>
+            @else
+                <p class="mb-8 text-meta text-muted">
+                    <a href="{{ route('login') }}" class="text-primary underline">Accedi</a> per lasciare un commento.
+                </p>
+            @endauth
+        @else
+            <p class="mb-8 text-meta text-muted">
+                I commenti saranno disponibili quando l’articolo sarà pubblicato.
+            </p>
+        @endif
+
+        {{-- Lista commenti: approvati per tutti; in attesa solo per chi può
+             moderare oppure per chi l'ha scritto (vede il proprio "in attesa"). --}}
+        @php
+            $visibleComments = $article->comments->filter(function ($c) use ($canModerate) {
+                return $c->isApproved()
+                    || $canModerate
+                    || (auth()->check() && auth()->id() === $c->user_id);
+            });
+        @endphp
+
+        @forelse ($visibleComments as $comment)
+            <x-comment :comment="$comment" :canModerate="$canModerate" />
+        @empty
+            {{-- Sulle bozze non si può commentare: niente invito a commentare. --}}
+            @if ($article->isPublished())
+                <p class="text-meta text-muted">Ancora nessun commento. Sii il primo a commentare!</p>
+            @endif
+        @endforelse
+    </section>
+
 @endsection
