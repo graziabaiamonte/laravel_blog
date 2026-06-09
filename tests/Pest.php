@@ -16,7 +16,7 @@ use Illuminate\Foundation\Testing\RefreshDatabase;
 
 pest()->extend(TestCase::class)
 
-    // RefreshDatabase fa sì che, prima di ogni test Feature, il database venga azzerato e ricreato eseguendo le migration
+    // RefreshDatabase fa sì che, prima di ogni test, il database venga azzerato e ricreato eseguendo le migration
     ->use(RefreshDatabase::class)
     ->in('Feature');
 
