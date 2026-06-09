@@ -24,7 +24,6 @@ document.addEventListener("DOMContentLoaded", () => {
                     },
                     body: JSON.stringify({ status: nuovoStato }),
                 });
-
                 const dati = await risposta.json();
 
                 if (!risposta.ok) {
