@@ -13,8 +13,6 @@ jobs:
   pest:
     name: Run Pest
     runs-on: ubuntu-latest
-    # name: Run Pest (PHP ${{ matrix.php-versions }} on ${{ matrix.operating-system }})
-    # runs-on: ${{ matrix.operating-system }}
     env:
       DB_CONNECTION: mysql
       DB_HOST: 127.0.0.1
@@ -22,12 +20,6 @@ jobs:
       DB_DATABASE: laravel
       DB_USERNAME: root
       DB_PASSWORD: password
-
-    strategy:
-      fail-fast: false
-      matrix:
-        operating-system: [ubuntu-latest]
-        php-versions: ['8.3']
 
     services:
       mysql:
@@ -48,11 +40,14 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
+      - name: Read PHP version from composer.json
+        id: php-version
+        run: echo "version=$(jq -r '.require.php' composer.json | grep -oE '[0-9]+\.[0-9]+' | head -1)" >> "$GITHUB_OUTPUT"
+
       - name: Setup PHP
         uses: shivammathur/setup-php@v2
         with:
-          # php-version: '8.3'
-          php-version: ${{ matrix.php-versions }}
+          php-version: ${{ steps.php-version.outputs.version }}
           extensions: ctype, curl, dom, fileinfo, filter, hash, imagick, json, mbstring, mysql, pcre, pdo, pdo_mysql, session, tokenizer, xml
           # coverage: xdebug
           coverage: none
