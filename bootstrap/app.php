@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Middleware\SetLocale;
 use App\Http\Middleware\UserOwnsArticle;
 use App\Http\Middleware\UserOwnsComment;
 use Illuminate\Foundation\Application;
@@ -16,6 +17,10 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware): void {
+        $middleware->web(append: [
+            SetLocale::class,
+        ]);
+
         // Registrazione alias per il middleware custom, così posso usarlo
         // nelle rotte scrivendo semplicemente 'owns.article'.
         $middleware->alias([
