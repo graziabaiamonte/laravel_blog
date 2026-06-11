@@ -17,7 +17,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     form.addEventListener("submit", async (event) => {
         event.preventDefault();
-        errorBox.textContent = ""; // pulisco eventuali errori precedenti
+        errorBox.textContent = ""; 
 
         try {
             const risposta = await fetch(form.action, {
@@ -44,8 +44,6 @@ document.addEventListener("DOMContentLoaded", () => {
                 return;
             }
 
-            // Successo: svuoto il campo, mostro il messaggio di esito
-            // e inserisco il nuovo commento in cima alla lista (è "in attesa").
             textarea.value = "";
 
             if (feedback) {

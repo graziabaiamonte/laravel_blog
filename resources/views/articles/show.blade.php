@@ -57,22 +57,14 @@
     <section id="commenti" class="mt-10 border-t border-line pt-8">
         <h2 class="mb-6 text-subheading font-semibold text-ink">Commenti</h2>
 
-        {{-- Il form si mostra SOLO se l'articolo è pubblicato: sulle bozze
-             (visibili solo a proprietario/admin) non si può commentare, quindi
-             nemmeno mostriamo il form. --}}
-        {{-- Messaggio di esito (riempito dal JS via AJAX; in fallback no-JS
-             mostra il flash di sessione). Parte nascosto se non c'è nulla. --}}
         <div
             data-comment-feedback
             class="mb-4 rounded-card border border-green-200 bg-green-50 px-4 py-3 text-sm text-green-800 {{ session('success') ? '' : 'hidden' }}">
             {{ session('success') }}
         </div>
 
-        {{-- Il form si mostra SOLO se l'articolo è pubblicato: sulle bozze
-             (visibili solo a proprietario/admin) non si può commentare, quindi
-             nemmeno mostriamo il form. --}}
         @if ($article->isPublished())
-            {{-- Form: solo per utenti loggati --}}
+         
             @auth
                 {{-- data-comment-form: hook per il JS che intercetta l'invio.
                      Senza JS, il form fa un normale POST + redirect (fallback). --}}
@@ -87,8 +79,6 @@
                             required
                             placeholder="Scrivi qui il tuo commento..."
                             class="w-full resize-y rounded-md border bg-white px-3 py-2 text-base focus:border-primary focus:outline-none focus:ring focus:ring-primary/10 @error('body') border-danger @else border-line @enderror">{{ old('body') }}</textarea>
-                        {{-- Box errore: il JS ci scrive l'errore di validazione AJAX;
-                             in fallback no-JS mostra l'errore del FormRequest. --}}
                         <small data-comment-error class="text-xs text-danger">@error('body'){{ $message }}@enderror</small>
                     </div>
                     <x-button variant="primary">Invia commento</x-button>

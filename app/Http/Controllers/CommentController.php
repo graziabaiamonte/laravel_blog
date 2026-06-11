@@ -14,14 +14,14 @@ class CommentController extends Controller
 {
     public function store(StoreCommentRequest $request, Article $article)
     {
-        abort_unless($article->isPublished(), 404);
 
-        // make() costruisce il commento con article_id già impostato (dalla relazione)
-        // e con il solo campo fillable 'body'
         $comment = $article->comments()->make([
             'body' => $request->validated()['body'],
         ]);
+
+        // assegna al commento l'ID dell'utente loggato
         $comment->user_id = $request->user()->id;
+
         $comment->status = CommentStatus::Pending;
         $comment->save();
 

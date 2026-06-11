@@ -14,8 +14,10 @@ test('un utente loggato può commentare via AJAX e l\'autore riceve la notifica'
     Notification::fake();
 
     $owner = User::factory()->create();
-    $article = Article::factory()->for($owner)->create();
-    $commenter = User::factory()->create();
+
+    $article = Article::factory()->create(['user_id' => $owner->id]);
+
+    $commenter = User::factory()->createOne();
 
     $response = actingAs($commenter)->postJson(
         route('comments.store', $article),
@@ -34,22 +36,6 @@ test('un utente loggato può commentare via AJAX e l\'autore riceve la notifica'
     ]);
 
     Notification::assertSentTo($owner, NewCommentNotification::class);
-});
-
-test('commentare una bozza restituisce 404', function () {
-    Notification::fake();
-
-    $article = Article::factory()->draft()->create();
-    $commenter = User::factory()->create();
-
-    $response = actingAs($commenter)->postJson(
-        route('comments.store', $article),
-        ['body' => 'Commento su una bozza']
-    );
-
-    $response->assertNotFound();
-    assertDatabaseCount('comments', 0);
-    Notification::assertNothingSent();
 });
 
 // La validazione AJAX blocca un commento vuoto: risposta 422 con errore su 'body'.

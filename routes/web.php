@@ -61,8 +61,6 @@ Route::middleware('auth')->prefix('admin')->as('admin.')->group(function () {
     Route::resource('users', UserController::class)
         ->middleware('role:'.Role::Admin->value);
 
-    // MODERAZIONE commenti: solo il proprietario dell'articolo (o l'admin).
-    // 'owns.comment' risale dal commento al suo articolo e verifica la proprietà.
     Route::patch('comments/{comment}/approve', [CommentController::class, 'approve'])
         ->middleware('owns.comment')
         ->name('comments.approve');
@@ -76,7 +74,6 @@ Route::middleware('auth')->prefix('admin')->as('admin.')->group(function () {
 // Parte PUBBLICA degli articoli
 Route::resource('articles', FrontendArticleController::class)->only(['index', 'show']);
 
-// SCRITTURA di un commento: qualsiasi utente loggato, anche su articoli non suoi.
 Route::post('articles/{article}/comments', [CommentController::class, 'store'])
     ->middleware('auth')
     ->name('comments.store');
