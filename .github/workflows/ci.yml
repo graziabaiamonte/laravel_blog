@@ -1,0 +1,70 @@
+name: CI
+
+on: [push]
+
+jobs:
+  # ---------------------------------------------------------------------------
+  # JOB 1: esegue i test automatici (Pest / php artisan test)
+  # ---------------------------------------------------------------------------
+  tests:
+    runs-on: ubuntu-latest
+
+    steps:
+      # Scarica il codice del repository sul runner
+      - name: Checkout del codice
+        uses: actions/checkout@v6
+
+      # Installa PHP con le estensioni richieste da Laravel
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.3'
+          extensions: mbstring, dom, fileinfo, sqlite3, gd, exif
+          coverage: none
+
+      - name: Cache delle dipendenze Composer
+        uses: actions/cache@v4
+        with:
+          path: vendor
+          key: composer-${{ hashFiles('composer.lock') }}
+          restore-keys: composer-
+
+      - name: Installazione dipendenze
+        run: composer install --no-interaction --prefer-dist --no-progress
+
+      - name: Preparazione ambiente
+        run: |
+          cp .env.example .env
+          php artisan key:generate
+
+      - name: Esecuzione dei test
+        run: php artisan test
+
+  # ---------------------------------------------------------------------------
+  # JOB 2: controlla lo stile del codice con Laravel Pint
+  # ---------------------------------------------------------------------------
+  code-style:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout del codice
+        uses: actions/checkout@v6
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.3'
+          coverage: none
+
+      - name: Cache delle dipendenze Composer
+        uses: actions/cache@v4
+        with:
+          path: vendor
+          key: composer-${{ hashFiles('composer.lock') }}
+          restore-keys: composer-
+
+      - name: Installazione dipendenze
+        run: composer install --no-interaction --prefer-dist --no-progress
+
+      - name: Controllo stile con Pint
+        run: ./vendor/bin/pint --test
