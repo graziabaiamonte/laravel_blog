@@ -75,7 +75,7 @@ Route::middleware('auth')->prefix('admin')->as('admin.')->group(function () {
 Route::resource('articles', FrontendArticleController::class)->only(['index', 'show']);
 
 Route::post('articles/{article}/comments', [CommentController::class, 'store'])
-    ->middleware('auth')
+    ->middleware(['auth', 'verified'])
     ->name('comments.store');
 
 require __DIR__.'/auth.php';
