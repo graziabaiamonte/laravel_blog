@@ -1,0 +1,20 @@
+name: PHP Linting
+
+on: push
+
+jobs:
+  phplint:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: 'laravel-pint'
+        uses: aglipanci/laravel-pint-action@latest
+        with:
+          preset: laravel
+          verboseMode: true
+          testMode: true
+          # configPath: ".project-settings/coding-style/php/pint.json" # custom Pint settings
+          # pintVersion: v1.13.10 # use useComposer instead
+          useComposer: true # use Pint version from the project's composer lock file
