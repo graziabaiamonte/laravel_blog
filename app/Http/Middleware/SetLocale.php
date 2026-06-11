@@ -22,12 +22,19 @@ class SetLocale
      */
     public function handle(Request $request, Closure $next): Response
     {
-        // getPreferredLanguage() legge l'header "Accept-Language" del browser
-        // e sceglie, tra le lingue che gli passo, quella che l'utente preferisce.
-        // Se nessuna combacia, ritorna il primo valore della lista (qui 'it'),
-        // quindi forzo subito dopo il fallback su config('app.fallback_locale').
-        $locale = $request->getPreferredLanguage(self::SUPPORTED_LOCALES);
+        // 1) Priorità alla scelta MANUALE dell'utente (pulsante nell'header),
+        //    salvata in sessione dalla rotta 'locale.switch'.
+        $locale = $request->session()->get('locale');
 
+        // 2) Se non c'è una scelta manuale valida, rilevo la lingua dal browser.
+        //    getPreferredLanguage() legge l'header "Accept-Language" e sceglie,
+        //    tra le lingue che gli passo, quella che l'utente preferisce.
+        if (! in_array($locale, self::SUPPORTED_LOCALES, true)) {
+            $locale = $request->getPreferredLanguage(self::SUPPORTED_LOCALES);
+        }
+
+        // 3) Ultima rete di sicurezza: se ancora non è una lingua supportata,
+        //    uso il fallback configurato in config/app.php.
         if (! in_array($locale, self::SUPPORTED_LOCALES, true)) {
             $locale = config('app.fallback_locale');
         }

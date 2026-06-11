@@ -20,6 +20,36 @@
 
             <!-- Settings Dropdown -->
             <div class="hidden sm:flex sm:items-center sm:ms-6">
+                <!-- Language Switcher -->
+                <div class="me-3">
+                    <x-dropdown align="right" width="48">
+                        <x-slot name="trigger">
+                            <button class="inline-flex items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-md text-gray-500 bg-white hover:text-gray-700 focus:outline-none transition ease-in-out duration-150">
+                                <!-- Icona "mondo" -->
+                                <svg class="h-4 w-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M12 21a9 9 0 100-18 9 9 0 000 18zm0 0c2.5-3 2.5-15 0-18m0 18c-2.5-3-2.5-15 0-18M3 12h18" />
+                                </svg>
+                                <span class="ms-1">{{ strtoupper(app()->getLocale()) }}</span>
+                                <svg class="fill-current h-4 w-4 ms-1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
+                                    <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd" />
+                                </svg>
+                            </button>
+                        </x-slot>
+
+                        <x-slot name="content">
+                            @foreach (['it' => 'Italiano', 'en' => 'English'] as $code => $label)
+                                <x-dropdown-link :href="route('locale.switch', $code)"
+                                    @class(['flex items-center justify-between', 'font-semibold text-gray-900' => app()->getLocale() === $code])>
+                                    <span>{{ $label }}</span>
+                                    @if (app()->getLocale() === $code)
+                                        <span aria-hidden="true">✓</span>
+                                    @endif
+                                </x-dropdown-link>
+                            @endforeach
+                        </x-slot>
+                    </x-dropdown>
+                </div>
+
                 @auth
                     <x-dropdown align="right" width="48">
                         <x-slot name="trigger">
@@ -75,6 +105,16 @@
             <x-responsive-nav-link :href="route('admin.dashboard')" :active="request()->routeIs('admin.dashboard')">
                 {{ __('Admin') }}
             </x-responsive-nav-link>
+        </div>
+
+        <!-- Language Switcher (mobile) -->
+        <div class="pt-2 pb-3 space-y-1 border-t border-gray-200">
+            <div class="px-4 pb-1 text-xs font-medium uppercase tracking-wide text-gray-400">{{ __('Language') }}</div>
+            @foreach (['it' => 'Italiano', 'en' => 'English'] as $code => $label)
+                <x-responsive-nav-link :href="route('locale.switch', $code)" :active="app()->getLocale() === $code">
+                    {{ $label }}
+                </x-responsive-nav-link>
+            @endforeach
         </div>
 
         <!-- Responsive Settings Options -->

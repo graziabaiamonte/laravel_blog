@@ -16,6 +16,18 @@ use Illuminate\Support\Facades\Route;
 // HOME PUBBLICA
 Route::get('/', [FrontendArticleController::class, 'index'])->name('home');
 
+// CAMBIO LINGUA: salva la lingua scelta in sessione e torna alla pagina precedente.
+// Il middleware SetLocale legge poi questa sessione a ogni richiesta, dando la
+// priorità alla scelta manuale rispetto alla lingua del browser.
+Route::get('/locale/{locale}', function (string $locale) {
+    // Accetto solo le lingue effettivamente supportate, per sicurezza.
+    if (in_array($locale, ['it', 'en'], true)) {
+        session(['locale' => $locale]);
+    }
+
+    return redirect()->back();
+})->name('locale.switch');
+
 // Parte di GESTIONE degli articoli (solo utenti loggati).
 Route::middleware('auth')->prefix('admin')->as('admin.')->group(function () {
 
