@@ -10,9 +10,9 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      # Scarica il codice del repository sul runner
+      # Scarica il codice del repository sul runner (Versione corretta v4)
       - name: Checkout del codice
-        uses: actions/checkout@v6
+        uses: actions/checkout@v4
 
       # Installa PHP con le estensioni richieste da Laravel
       - name: Setup PHP
@@ -29,8 +29,24 @@ jobs:
           key: composer-${{ hashFiles('composer.lock') }}
           restore-keys: composer-
 
-      - name: Installazione dipendenze
+      - name: Installazione dipendenze Composer
         run: composer install --no-interaction --prefer-dist --no-progress
+
+      # -------------------------------------------------------------
+      #  Aggiunta di Node.js e compilazione Asset (Vite)
+      # -------------------------------------------------------------
+      - name: Configura Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '24.11.1'
+          cache: 'npm'
+
+      - name: Installa dipendenze Frontend
+        run: npm ci
+
+      - name: Compila gli asset con Vite
+        run: npm run build
+      # -------------------------------------------------------------
 
       - name: Preparazione ambiente
         run: |
