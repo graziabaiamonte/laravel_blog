@@ -6,9 +6,14 @@
 
     @php
         // Classi riutilizzabili per i campi del form filtri (utility Tailwind).
-        $group = 'flex flex-col gap-1.5';
+        // Su mobile ogni campo va a tutta larghezza (w-full) e si impila;
+        // da `sm` in su torna a larghezza automatica (sm:w-auto).
+        $group = 'flex w-full flex-col gap-1.5 sm:w-auto';
         $label = 'text-sm font-medium text-ink';
         $control = 'rounded-md border border-line bg-white px-3 py-2 text-base focus:border-primary focus:outline-none focus:ring focus:ring-primary/10';
+        // Stessa base dei campi, ma con padding destro extra (pr-10) per non far
+        // finire il testo sotto la freccia del select, e una larghezza minima.
+        $select = $control.' pr-10 sm:min-w-[12rem]';
     @endphp
 
     <div class="mb-6 flex flex-wrap items-center justify-between gap-4 border-b border-line p-6">
@@ -42,33 +47,87 @@
                 class="{{ $control }}">
         </div>
 
+        {{-- Categorie: checkbox multiple. name="category_id[]" → arriva come array.
+             @checked tiene selezionate quelle scelte dopo il submit. --}}
         <div class="{{ $group }}">
-            <label for="filter-category" class="{{ $label }}">{{ __('Category') }}</label>
-            <select id="filter-category" name="category_id" class="{{ $control }}">
-                <option value="">{{ __('All categories') }}</option>
+            <span class="{{ $label }}">{{ __('Categories') }}</span>
+            <div class="flex flex-wrap gap-x-4 gap-y-1.5 pt-1">
                 @foreach ($categories as $category)
-                    <option value="{{ $category->id }}" @selected(request('category_id') == $category->id)>
+                    <label class="flex items-center gap-2 text-base">
+                        <input
+                            type="checkbox"
+                            name="category_id[]"
+                            value="{{ $category->id }}"
+                            @checked(in_array($category->id, (array) request('category_id')))
+                            class="rounded border-line text-primary focus:ring-primary/30">
                         {{ $category->name }}
-                    </option>
+                    </label>
                 @endforeach
+            </div>
+        </div>
+
+        {{-- Tag: checkbox multiple in AND (l'articolo deve avere TUTTI i tag scelti). --}}
+        <div class="{{ $group }}">
+            <span class="{{ $label }}">{{ __('Tags') }}</span>
+            <div class="flex flex-wrap gap-x-4 gap-y-1.5 pt-1">
+                @foreach ($tags as $tag)
+                    <label class="flex items-center gap-2 text-base">
+                        <input
+                            type="checkbox"
+                            name="tag_id[]"
+                            value="{{ $tag->id }}"
+                            @checked(in_array($tag->id, (array) request('tag_id')))
+                            class="rounded border-line text-primary focus:ring-primary/30">
+                        {{ $tag->name }}
+                    </label>
+                @endforeach
+            </div>
+        </div>
+
+        {{-- Filtro per data di pubblicazione: range Da/A, entrambi opzionali. --}}
+        <div class="{{ $group }}">
+            <label for="filter-date-from" class="{{ $label }}">{{ __('From') }}</label>
+            <input
+                type="date"
+                id="filter-date-from"
+                name="date_from"
+                value="{{ request('date_from') }}"
+                max="{{ request('date_to') }}"
+                class="{{ $control }}">
+        </div>
+
+        <div class="{{ $group }}">
+            <label for="filter-date-to" class="{{ $label }}">{{ __('To') }}</label>
+            <input
+                type="date"
+                id="filter-date-to"
+                name="date_to"
+                value="{{ request('date_to') }}"
+                min="{{ request('date_from') }}"
+                class="{{ $control }}">
+        </div>
+
+        <div class="{{ $group }}">
+            <label for="filter-sort-title" class="{{ $label }}">{{ __('Sort by title') }}</label>
+            <select id="filter-sort-title" name="sort_title" class="{{ $select }}">
+                <option value="">{{ __('—') }}</option>
+                <option value="title" @selected(request('sort_title') === 'title')>{{ __('Title A–Z') }}</option>
+                <option value="-title" @selected(request('sort_title') === '-title')>{{ __('Title Z–A') }}</option>
             </select>
         </div>
 
         <div class="{{ $group }}">
-            <label for="filter-tag" class="{{ $label }}">{{ __('Tag') }}</label>
-            <select id="filter-tag" name="tag_id" class="{{ $control }}">
-                <option value="">{{ __('All tags') }}</option>
-                @foreach ($tags as $tag)
-                    <option value="{{ $tag->id }}" @selected(request('tag_id') == $tag->id)>
-                        {{ $tag->name }}
-                    </option>
-                @endforeach
+            <label for="filter-sort-date" class="{{ $label }}">{{ __('Sort by date') }}</label>
+            <select id="filter-sort-date" name="sort_date" class="{{ $select }}">
+                <option value="">{{ __('—') }}</option>
+                <option value="-created_at" @selected(request('sort_date') === '-created_at')>{{ __('Newest first') }}</option>
+                <option value="created_at" @selected(request('sort_date') === 'created_at')>{{ __('Oldest first') }}</option>
             </select>
         </div>
 
         <div class="flex gap-2">
             <x-button variant="primary">{{ __('Filter') }}</x-button>
-            @if (request()->hasAny(['search', 'category_id', 'tag_id']))
+            @if (request()->hasAny(['search', 'category_id', 'tag_id', 'date_from', 'date_to', 'sort_title', 'sort_date']))
                 <x-button variant="cancel" :href="route('articles.index')">Reset</x-button>
             @endif
         </div>

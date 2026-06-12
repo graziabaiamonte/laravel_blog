@@ -151,6 +151,33 @@ class Article extends Model implements HasMedia
         );
     }
 
+    // ─── Versioni MULTIPLE degli scope sopra (filtri con più valori) ───────────
+
+    #[Scope]
+    protected function inCategories(Builder $query, array $ids): Builder
+    {
+        return $query->when($ids, fn ($q) => $q->whereIn('category_id', $ids));
+    }
+
+    #[Scope]
+    protected function withTags(Builder $query, array $ids): Builder
+    {
+        return $query->when($ids, function ($q) use ($ids) {
+            foreach ($ids as $id) {
+                $q->whereHas('tags', fn ($t) => $t->where('tags.id', $id));
+            }
+        });
+    }
+
+    // Filtro per data di pubblicazione. Entrambe le estremità sono opzionali:
+    #[Scope]
+    protected function createdBetween(Builder $query, ?string $from, ?string $to): Builder
+    {
+        return $query
+            ->when($from, fn ($q) => $q->whereDate('created_at', '>=', $from))
+            ->when($to, fn ($q) => $q->whereDate('created_at', '<=', $to));
+    }
+
     public function isDraft(): bool
     {
         return $this->status === ArticleStatus::Draft;
@@ -167,9 +194,6 @@ class Article extends Model implements HasMedia
         return $query->where('status', ArticleStatus::Published->value);
     }
 
-    // Scope che filtra gli articoli di uno specifico utente.
-    // A differenza degli scope sopra (che usano when() perché il filtro è opzionale),
-    // qui l'utente è SEMPRE obbligatorio
     #[Scope]
     protected function ownedBy(Builder $query, User $user): Builder
     {
